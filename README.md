@@ -53,9 +53,9 @@ You can define as many keyframes as you need at any percent values.
 | Type | Examples | Interpolation |
 |------|----------|---------------|
 | **Numeric** | `opacity`, `width`, `margin-left` | Linear interpolation with unit preservation |
-| **Colors** | `color`, `background-color`, `border-color` | Per-channel RGBA interpolation (`#rgb`, `#rrggbb`, `rgb()`, `rgba()`) |
+| **Colors** | `color`, `background-color`, `border-color` | Per-channel RGBA interpolation (`#rgb`, `#rgba`, `#rrggbb`, `#rrggbbaa`, `rgb()`, `rgba()`, `hsl()`, `hsla()`, [named colors](https://developer.mozilla.org/en-US/docs/Web/CSS/named-color)) |
 | **Transform functions** | `translateX`, `scale`, `rotate`, `skew`, `perspective` | Each function interpolated independently, order preserved |
-| **Filter functions** | `blur`, `brightness`, `contrast`, `grayscale`, `sepia`, etc. | Same as transforms |
+| **Filter functions** | `blur`, `brightness`, `contrast`, `grayscale`, `sepia`, `drop-shadow`, etc. | Same as transforms (up to 2 `drop-shadow` per keyframe, with color interpolation) |
 | **Backdrop-filter** | Same as filter | Same as filter |
 | **Discrete** | `display`, `position`, `visibility`, `text-align`, etc. | Snaps to the most recent keyframe value (no interpolation) |
 
