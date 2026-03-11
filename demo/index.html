@@ -615,8 +615,8 @@
   </main>
 
   <script src="./physics-engine.min.js"></script>
-  <script src="./frame-engine.min.js"></script>
-  <script>
+  <script type="module">
+    import FrameEngine from '../src/frame-engine.js';
     // ---- Helpers ----
     function applyStyles(el, styles) {
       for (const [prop, value] of Object.entries(styles)) {

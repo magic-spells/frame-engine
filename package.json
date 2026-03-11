@@ -17,18 +17,13 @@
     "dist"
   ],
   "scripts": {
-    "build": "NODE_ENV=production rollup -c",
-    "dev": "NODE_ENV=development rollup -c --watch",
-    "prod": "NODE_ENV=production rollup -c --watch"
+    "build": "vite build",
+    "dev": "vite",
+    "prod": "vite build --watch"
   },
   "author": "Cory Schulz",
   "license": "MIT",
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^25.0.7",
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-terser": "^1.0.0",
-    "rollup": "^3.0.0",
-    "rollup-plugin-livereload": "^2.0.5",
-    "rollup-plugin-serve": "^1.1.1"
+    "vite": "^7.3.1"
   }
 }
