@@ -83,3 +83,9 @@ Calculate interpolated styles at a position.
 ## License
 
 MIT
+
+---
+
+<p align="center">
+  Made by <a href="https://github.com/coryschulz">Cory Schulz</a>
+</p>
