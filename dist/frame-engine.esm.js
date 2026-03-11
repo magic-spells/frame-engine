@@ -1,4 +1,4 @@
-const I = /* @__PURE__ */ new Set([
+const R = /* @__PURE__ */ new Set([
   "display",
   "position",
   "float",
@@ -42,11 +42,12 @@ const I = /* @__PURE__ */ new Set([
   "page-break-before",
   "page-break-after",
   "page-break-inside"
-]), g = /* @__PURE__ */ new Set(["transform", "filter", "backdrop-filter"]), m = {
+]), g = /* @__PURE__ */ new Set(["transform", "filter", "backdrop-filter"]), b = {
   translateX: [{ value: 0, unit: "px" }],
   translateY: [{ value: 0, unit: "px" }],
   translateZ: [{ value: 0, unit: "px" }],
   translate: [{ value: 0, unit: "px" }, { value: 0, unit: "px" }],
+  translate3d: [{ value: 0, unit: "px" }, { value: 0, unit: "px" }, { value: 0, unit: "px" }],
   scale: [{ value: 1, unit: "" }],
   scaleX: [{ value: 1, unit: "" }],
   scaleY: [{ value: 1, unit: "" }],
@@ -56,6 +57,7 @@ const I = /* @__PURE__ */ new Set([
   rotateX: [{ value: 0, unit: "deg" }],
   rotateY: [{ value: 0, unit: "deg" }],
   rotateZ: [{ value: 0, unit: "deg" }],
+  rotate3d: [{ value: 0, unit: "" }, { value: 0, unit: "" }, { value: 1, unit: "" }, { value: 0, unit: "deg" }],
   skew: [{ value: 0, unit: "deg" }, { value: 0, unit: "deg" }],
   skewX: [{ value: 0, unit: "deg" }],
   skewY: [{ value: 0, unit: "deg" }],
@@ -71,7 +73,7 @@ const I = /* @__PURE__ */ new Set([
   sepia: [{ value: 0, unit: "" }],
   "drop-shadow-1": [{ value: 0, unit: "px" }, { value: 0, unit: "px" }, { value: 0, unit: "px" }],
   "drop-shadow-2": [{ value: 0, unit: "px" }, { value: 0, unit: "px" }, { value: 0, unit: "px" }]
-}, w = {
+}, I = {
   opacity: [0, 1],
   blur: [0, 1 / 0],
   brightness: [0, 1 / 0],
@@ -80,67 +82,222 @@ const I = /* @__PURE__ */ new Set([
   invert: [0, 1],
   sepia: [0, 1],
   saturate: [0, 1 / 0]
-}, $ = { red: 0, green: 0, blue: 0, alpha: 0 };
-class S {
+}, y = { red: 0, green: 0, blue: 0, alpha: 0 };
+let A = !1;
+function $(p, e, a) {
+  return a < 0 && (a += 1), a > 1 && (a -= 1), a < 1 / 6 ? p + (e - p) * 6 * a : a < 1 / 2 ? e : a < 2 / 3 ? p + (e - p) * (2 / 3 - a) * 6 : p;
+}
+const M = {
+  aliceblue: [240, 248, 255, 1],
+  antiquewhite: [250, 235, 215, 1],
+  aqua: [0, 255, 255, 1],
+  aquamarine: [127, 255, 212, 1],
+  azure: [240, 255, 255, 1],
+  beige: [245, 245, 220, 1],
+  bisque: [255, 228, 196, 1],
+  black: [0, 0, 0, 1],
+  blanchedalmond: [255, 235, 205, 1],
+  blue: [0, 0, 255, 1],
+  blueviolet: [138, 43, 226, 1],
+  brown: [165, 42, 42, 1],
+  burlywood: [222, 184, 135, 1],
+  cadetblue: [95, 158, 160, 1],
+  chartreuse: [127, 255, 0, 1],
+  chocolate: [210, 105, 30, 1],
+  coral: [255, 127, 80, 1],
+  cornflowerblue: [100, 149, 237, 1],
+  cornsilk: [255, 248, 220, 1],
+  crimson: [220, 20, 60, 1],
+  cyan: [0, 255, 255, 1],
+  darkblue: [0, 0, 139, 1],
+  darkcyan: [0, 139, 139, 1],
+  darkgoldenrod: [184, 134, 11, 1],
+  darkgray: [169, 169, 169, 1],
+  darkgreen: [0, 100, 0, 1],
+  darkgrey: [169, 169, 169, 1],
+  darkkhaki: [189, 183, 107, 1],
+  darkmagenta: [139, 0, 139, 1],
+  darkolivegreen: [85, 107, 47, 1],
+  darkorange: [255, 140, 0, 1],
+  darkorchid: [153, 50, 204, 1],
+  darkred: [139, 0, 0, 1],
+  darksalmon: [233, 150, 122, 1],
+  darkseagreen: [143, 188, 143, 1],
+  darkslateblue: [72, 61, 139, 1],
+  darkslategray: [47, 79, 79, 1],
+  darkslategrey: [47, 79, 79, 1],
+  darkturquoise: [0, 206, 209, 1],
+  darkviolet: [148, 0, 211, 1],
+  deeppink: [255, 20, 147, 1],
+  deepskyblue: [0, 191, 255, 1],
+  dimgray: [105, 105, 105, 1],
+  dimgrey: [105, 105, 105, 1],
+  dodgerblue: [30, 144, 255, 1],
+  firebrick: [178, 34, 34, 1],
+  floralwhite: [255, 250, 240, 1],
+  forestgreen: [34, 139, 34, 1],
+  fuchsia: [255, 0, 255, 1],
+  gainsboro: [220, 220, 220, 1],
+  ghostwhite: [248, 248, 255, 1],
+  gold: [255, 215, 0, 1],
+  goldenrod: [218, 165, 32, 1],
+  gray: [128, 128, 128, 1],
+  green: [0, 128, 0, 1],
+  greenyellow: [173, 255, 47, 1],
+  grey: [128, 128, 128, 1],
+  honeydew: [240, 255, 240, 1],
+  hotpink: [255, 105, 180, 1],
+  indianred: [205, 92, 92, 1],
+  indigo: [75, 0, 130, 1],
+  ivory: [255, 255, 240, 1],
+  khaki: [240, 230, 140, 1],
+  lavender: [230, 230, 250, 1],
+  lavenderblush: [255, 240, 245, 1],
+  lawngreen: [124, 252, 0, 1],
+  lemonchiffon: [255, 250, 205, 1],
+  lightblue: [173, 216, 230, 1],
+  lightcoral: [240, 128, 128, 1],
+  lightcyan: [224, 255, 255, 1],
+  lightgoldenrodyellow: [250, 250, 210, 1],
+  lightgray: [211, 211, 211, 1],
+  lightgreen: [144, 238, 144, 1],
+  lightgrey: [211, 211, 211, 1],
+  lightpink: [255, 182, 193, 1],
+  lightsalmon: [255, 160, 122, 1],
+  lightseagreen: [32, 178, 170, 1],
+  lightskyblue: [135, 206, 250, 1],
+  lightslategray: [119, 136, 153, 1],
+  lightslategrey: [119, 136, 153, 1],
+  lightsteelblue: [176, 196, 222, 1],
+  lightyellow: [255, 255, 224, 1],
+  lime: [0, 255, 0, 1],
+  limegreen: [50, 205, 50, 1],
+  linen: [250, 240, 230, 1],
+  magenta: [255, 0, 255, 1],
+  maroon: [128, 0, 0, 1],
+  mediumaquamarine: [102, 205, 170, 1],
+  mediumblue: [0, 0, 205, 1],
+  mediumorchid: [186, 85, 211, 1],
+  mediumpurple: [147, 112, 219, 1],
+  mediumseagreen: [60, 179, 113, 1],
+  mediumslateblue: [123, 104, 238, 1],
+  mediumspringgreen: [0, 250, 154, 1],
+  mediumturquoise: [72, 209, 204, 1],
+  mediumvioletred: [199, 21, 133, 1],
+  midnightblue: [25, 25, 112, 1],
+  mintcream: [245, 255, 250, 1],
+  mistyrose: [255, 228, 225, 1],
+  moccasin: [255, 228, 181, 1],
+  navajowhite: [255, 222, 173, 1],
+  navy: [0, 0, 128, 1],
+  oldlace: [253, 245, 230, 1],
+  olive: [128, 128, 0, 1],
+  olivedrab: [107, 142, 35, 1],
+  orange: [255, 165, 0, 1],
+  orangered: [255, 69, 0, 1],
+  orchid: [218, 112, 214, 1],
+  palegoldenrod: [238, 232, 170, 1],
+  palegreen: [152, 251, 152, 1],
+  paleturquoise: [175, 238, 238, 1],
+  palevioletred: [219, 112, 147, 1],
+  papayawhip: [255, 239, 213, 1],
+  peachpuff: [255, 218, 185, 1],
+  peru: [205, 133, 63, 1],
+  pink: [255, 192, 203, 1],
+  plum: [221, 160, 221, 1],
+  powderblue: [176, 224, 230, 1],
+  purple: [128, 0, 128, 1],
+  rebeccapurple: [102, 51, 153, 1],
+  red: [255, 0, 0, 1],
+  rosybrown: [188, 143, 143, 1],
+  royalblue: [65, 105, 225, 1],
+  saddlebrown: [139, 69, 19, 1],
+  salmon: [250, 128, 114, 1],
+  sandybrown: [244, 164, 96, 1],
+  seagreen: [46, 139, 87, 1],
+  seashell: [255, 245, 238, 1],
+  sienna: [160, 82, 45, 1],
+  silver: [192, 192, 192, 1],
+  skyblue: [135, 206, 235, 1],
+  slateblue: [106, 90, 205, 1],
+  slategray: [112, 128, 144, 1],
+  slategrey: [112, 128, 144, 1],
+  snow: [255, 250, 250, 1],
+  springgreen: [0, 255, 127, 1],
+  steelblue: [70, 130, 180, 1],
+  tan: [210, 180, 140, 1],
+  teal: [0, 128, 128, 1],
+  thistle: [216, 191, 216, 1],
+  tomato: [255, 99, 71, 1],
+  turquoise: [64, 224, 208, 1],
+  violet: [238, 130, 238, 1],
+  wheat: [245, 222, 179, 1],
+  white: [255, 255, 255, 1],
+  whitesmoke: [245, 245, 245, 1],
+  yellow: [255, 255, 0, 1],
+  yellowgreen: [154, 205, 50, 1],
+  transparent: [0, 0, 0, 0]
+};
+class C {
   /**
    * @param {Keyframes} keyframes - Object mapping percent positions to CSS styles
    */
-  constructor(t) {
-    this.setKeyframes(t);
+  constructor(e) {
+    this.setKeyframes(e);
   }
   // -- Setup (parse once) --
   /**
    * Replace the current keyframes and re-parse all values.
    * @param {Keyframes} keyframes - Object mapping percent positions (0-100) to CSS styles
    */
-  setKeyframes(t) {
-    this.keyframes = Object.keys(t).map(Number).sort((n, s) => n - s).map((n) => ({ percent: n, values: this.flatten(t[n]) }));
-    const r = {};
+  setKeyframes(e) {
+    this.keyframes = Object.keys(e).map(Number).sort((n, r) => n - r).map((n) => ({ percent: n, values: this.flatten(e[n]) }));
+    const a = {};
     for (const n of g)
-      r[n] = /* @__PURE__ */ new Set();
+      a[n] = /* @__PURE__ */ new Set();
     for (const n of this.keyframes)
-      for (const s in n.values) {
-        const e = s.indexOf(":");
-        if (e === -1) continue;
-        const a = s.substring(0, e), i = s.substring(e + 1);
-        i !== "__order" && g.has(a) && r[a].add(i);
+      for (const r in n.values) {
+        const t = r.indexOf(":");
+        if (t === -1) continue;
+        const s = r.substring(0, t), i = r.substring(t + 1);
+        i !== "__order" && g.has(s) && a[s].add(i);
       }
     for (const n of g) {
-      if (r[n].size === 0) continue;
-      const s = `${n}:__order`;
-      for (const e of this.keyframes) {
-        if (!(s in e.values)) {
-          e.values[s] = { discrete: !0, value: [...r[n]] };
-          for (const i of r[n]) {
-            const u = `${n}:${i}`, l = m[i] || [{ value: 0, unit: "" }];
-            e.values[u] = { args: l.map((c) => ({ ...c })) }, i.startsWith("drop-shadow-") && (e.values[u].color = { ...$ });
+      if (a[n].size === 0) continue;
+      const r = `${n}:__order`;
+      for (const t of this.keyframes) {
+        if (!(r in t.values)) {
+          t.values[r] = { discrete: !0, value: [...a[n]] };
+          for (const i of a[n]) {
+            const l = `${n}:${i}`, u = b[i] || [{ value: 0, unit: "" }];
+            t.values[l] = { args: u.map((c) => ({ ...c })) }, i.startsWith("drop-shadow-") && (t.values[l].color = { ...y });
           }
           continue;
         }
-        for (const i of r[n]) {
-          const u = `${n}:${i}`;
-          if (!(u in e.values)) {
-            const l = m[i] || [{ value: 0, unit: "" }];
-            e.values[u] = { args: l.map((c) => ({ ...c })) }, i.startsWith("drop-shadow-") && (e.values[u].color = { ...$ }), e.values[s].value.includes(i) || e.values[s].value.push(i);
+        for (const i of a[n]) {
+          const l = `${n}:${i}`;
+          if (!(l in t.values)) {
+            const u = b[i] || [{ value: 0, unit: "" }];
+            t.values[l] = { args: u.map((c) => ({ ...c })) }, i.startsWith("drop-shadow-") && (t.values[l].color = { ...y }), t.values[r].value.includes(i) || t.values[r].value.push(i);
           }
         }
       }
     }
     this._allKeys = /* @__PURE__ */ new Set();
     for (const n of this.keyframes)
-      for (const s in n.values)
-        s.endsWith(":__order") || this._allKeys.add(s);
+      for (const r in n.values)
+        r.endsWith(":__order") || this._allKeys.add(r);
     this._keyFrames = {};
     for (const n of this._allKeys)
-      this._keyFrames[n] = this.keyframes.filter((s) => n in s.values);
+      this._keyFrames[n] = this.keyframes.filter((r) => n in r.values);
     this._orders = {};
     for (const n of g) {
-      const s = `${n}:__order`, e = this.keyframes.filter((u) => s in u.values);
-      if (e.length === 0) continue;
-      const a = /* @__PURE__ */ new Set(), i = [];
-      for (const u of e)
-        for (const l of u.values[s].value)
-          a.has(l) || (a.add(l), i.push(l));
+      const r = `${n}:__order`, t = this.keyframes.filter((l) => r in l.values);
+      if (t.length === 0) continue;
+      const s = /* @__PURE__ */ new Set(), i = [];
+      for (const l of t)
+        for (const u of l.values[r].value)
+          s.has(u) || (s.add(u), i.push(u));
       this._orders[n] = i;
     }
   }
@@ -151,20 +308,21 @@ class S {
    * @param {Object<string, string|number>} styles - Raw CSS property/value pairs
    * @returns {Object<string, NumericValue|ColorValue|DiscreteValue|MultiArgValue>}
    */
-  flatten(t) {
-    const r = {};
-    for (const n in t)
+  flatten(e) {
+    const a = {};
+    for (const n in e)
       if (g.has(n))
-        Object.assign(r, this.flattenFunctions(n, t[n]));
-      else if (this.isColor(t[n]))
-        r[n] = this.parseColor(t[n]);
-      else if (I.has(n))
-        r[n] = { discrete: !0, value: t[n] };
+        Object.assign(a, this.flattenFunctions(n, e[n]));
+      else if (this.isColor(e[n])) {
+        const r = this.parseColor(e[n]);
+        a[n] = r || { discrete: !0, value: e[n] };
+      } else if (R.has(n))
+        a[n] = { discrete: !0, value: e[n] };
       else {
-        const s = this.parseValue(t[n]);
-        r[n] = s || { discrete: !0, value: t[n] };
+        const r = this.parseValue(e[n]);
+        a[n] = r || { discrete: !0, value: e[n] };
       }
-    return r;
+    return a;
   }
   /**
    * Expand a function-list property (e.g. "transform") into individual keyed entries.
@@ -173,18 +331,21 @@ class S {
    * @param {string} str - The raw CSS function string (e.g. "translateX(10px) scale(2)")
    * @returns {Object<string, MultiArgValue|DiscreteValue>}
    */
-  flattenFunctions(t, r) {
-    const n = {}, s = [], e = {};
-    for (const { name: a, args: i, color: u } of this.parseFunctions(r)) {
-      let l = a;
-      if (a === "drop-shadow") {
-        if (e[a] = (e[a] || 0) + 1, e[a] > 2) continue;
-        l = `${a}-${e[a]}`;
+  flattenFunctions(e, a) {
+    const n = {}, r = [], t = {};
+    for (const { name: s, args: i, color: l } of this.parseFunctions(a)) {
+      let u = s;
+      if (s === "drop-shadow") {
+        if (t[s] = (t[s] || 0) + 1, t[s] > 2) {
+          A || (A = !0, console.warn("FrameEngine: Only the first 2 drop-shadow functions per keyframe are interpolated. Additional drop-shadows are ignored."));
+          continue;
+        }
+        u = `${s}-${t[s]}`;
       }
       const c = { args: i };
-      u && (c.color = u), n[`${t}:${l}`] = c, s.push(l);
+      l && (c.color = l), n[`${e}:${u}`] = c, r.push(u);
     }
-    return n[`${t}:__order`] = { discrete: !0, value: s }, n;
+    return n[`${e}:__order`] = { discrete: !0, value: r }, n;
   }
   // -- Parsing (only used in setKeyframes) --
   /**
@@ -193,47 +354,48 @@ class S {
    * @param {string} str - e.g. "translateX(10px) rotate(45deg)"
    * @returns {{ name: string, args: NumericValue[] }[]}
    */
-  parseFunctions(t) {
-    const r = [];
+  parseFunctions(e) {
+    const a = [];
     let n = 0;
-    const s = t.length;
-    for (; n < s; ) {
-      for (; n < s && /\s/.test(t[n]); ) n++;
-      if (n >= s) break;
-      let e = "";
-      for (; n < s && /[\w-]/.test(t[n]); )
-        e += t[n], n++;
-      if (!e || n >= s || t[n] !== "(") continue;
+    const r = e.length;
+    for (; n < r; ) {
+      for (; n < r && /\s/.test(e[n]); ) n++;
+      if (n >= r) break;
+      let t = "";
+      for (; n < r && /[\w-]/.test(e[n]); )
+        t += e[n], n++;
+      if (!t || n >= r || e[n] !== "(") continue;
       n++;
-      let a = 1, i = "";
-      for (; n < s && a > 0; ) {
-        if (t[n] === "(") a++;
-        else if (t[n] === ")" && (a--, a === 0)) {
+      let s = 1, i = "";
+      for (; n < r && s > 0; ) {
+        if (e[n] === "(") s++;
+        else if (e[n] === ")" && (s--, s === 0)) {
           n++;
           break;
         }
-        i += t[n], n++;
+        i += e[n], n++;
       }
-      if (e === "drop-shadow") {
-        const u = this.splitArgs(i), l = [];
+      if (t === "drop-shadow") {
+        const l = this.splitArgs(i), u = [];
         let c = null;
-        for (const o of u)
-          if (this.isColor(o))
-            c = this.parseColor(o);
-          else {
-            const f = o.match(/^(-?\d*\.?\d+)(\D*)$/);
-            l.push(f ? { value: parseFloat(f[1]), unit: f[2] } : { value: 0, unit: "" });
+        for (const o of l)
+          if (this.isColor(o)) {
+            const d = this.parseColor(o);
+            d && (c = d);
+          } else {
+            const d = o.match(/^(-?\d*\.?\d+)(\D*)$/);
+            u.push(d ? { value: parseFloat(d[1]), unit: d[2] } : { value: 0, unit: "" });
           }
-        r.push({ name: e, args: l, color: c });
+        a.push({ name: t, args: u, color: c });
       } else {
-        const u = i.split(/\s*,\s*|\s+/).map((l) => {
-          const c = l.match(/^(-?\d*\.?\d+)(\D*)$/);
+        const l = i.split(/\s*,\s*|\s+/).map((u) => {
+          const c = u.match(/^(-?\d*\.?\d+)(\D*)$/);
           return c ? { value: parseFloat(c[1]), unit: c[2] } : { value: 0, unit: "" };
         });
-        r.push({ name: e, args: u });
+        a.push({ name: t, args: l });
       }
     }
-    return r;
+    return a;
   }
   /**
    * Paren-aware argument splitter for CSS functions.
@@ -241,33 +403,35 @@ class S {
    * @param {string} argStr
    * @returns {string[]}
    */
-  splitArgs(t) {
-    const r = [];
-    let n = "", s = 0;
-    for (let e = 0; e < t.length; e++) {
-      const a = t[e];
-      a === "(" ? s++ : a === ")" && s--, s === 0 && (a === " " || a === ",") ? (n.trim() && r.push(n.trim()), n = "") : n += a;
+  splitArgs(e) {
+    const a = [];
+    let n = "", r = 0;
+    for (let t = 0; t < e.length; t++) {
+      const s = e[t];
+      s === "(" ? r++ : s === ")" && r--, r === 0 && (s === " " || s === ",") ? (n.trim() && a.push(n.trim()), n = "") : n += s;
     }
-    return n.trim() && r.push(n.trim()), r;
+    return n.trim() && a.push(n.trim()), a;
   }
   /**
    * Parse a single CSS value into a numeric value and unit.
    * @param {string|number} value - e.g. "10px", "45deg", 42
    * @returns {NumericValue|null} Parsed value or null if not numeric
    */
-  parseValue(t) {
-    if (typeof t == "number") return { value: t, unit: "" };
-    const r = String(t).match(/^(-?\d*\.?\d+)(\D*)$/);
-    return r ? { value: parseFloat(r[1]), unit: r[2] } : null;
+  parseValue(e) {
+    if (typeof e == "number") return { value: e, unit: "" };
+    const a = String(e).match(/^(-?\d*\.?\d+)(\D*)$/);
+    return a ? { value: parseFloat(a[1]), unit: a[2] } : null;
   }
   /**
    * Parse a CSS color string into a ColorValue object.
    * @param {string} color - e.g. "#ff0", "#ff0000", "rgb(255,0,0)", "rgba(255,0,0,0.5)", "hsl(120,50%,50%)"
    * @returns {ColorValue}
    */
-  parseColor(t) {
-    const [r, n, s, e] = this.colorToRGBA(t);
-    return { red: r, green: n, blue: s, alpha: e };
+  parseColor(e) {
+    const a = this.colorToRGBA(e);
+    if (!a) return null;
+    const [n, r, t, s] = a;
+    return { red: n, green: r, blue: t, alpha: s };
   }
   /**
    * Convert a CSS color string to an [r, g, b, a] tuple.
@@ -275,37 +439,47 @@ class S {
    * @param {string} color
    * @returns {[number, number, number, number]}
    */
-  colorToRGBA(t) {
-    if (typeof t != "string") return [0, 0, 0, 1];
-    if (/^#[0-9A-Fa-f]{3}$/.test(t))
+  colorToRGBA(e) {
+    if (typeof e != "string") return null;
+    const a = M[e.toLowerCase()];
+    if (a) return a;
+    if (/^#[0-9A-Fa-f]{3}$/.test(e))
       return [
-        parseInt(t[1] + t[1], 16),
-        parseInt(t[2] + t[2], 16),
-        parseInt(t[3] + t[3], 16),
+        parseInt(e[1] + e[1], 16),
+        parseInt(e[2] + e[2], 16),
+        parseInt(e[3] + e[3], 16),
         1
       ];
-    if (/^#[0-9A-Fa-f]{4}$/.test(t))
+    if (/^#[0-9A-Fa-f]{4}$/.test(e))
       return [
-        parseInt(t[1] + t[1], 16),
-        parseInt(t[2] + t[2], 16),
-        parseInt(t[3] + t[3], 16),
-        parseInt(t[4] + t[4], 16) / 255
+        parseInt(e[1] + e[1], 16),
+        parseInt(e[2] + e[2], 16),
+        parseInt(e[3] + e[3], 16),
+        parseInt(e[4] + e[4], 16) / 255
       ];
-    if (/^#[0-9A-Fa-f]{6}$/.test(t))
+    if (/^#[0-9A-Fa-f]{6}$/.test(e))
       return [
-        parseInt(t.slice(1, 3), 16),
-        parseInt(t.slice(3, 5), 16),
-        parseInt(t.slice(5, 7), 16),
+        parseInt(e.slice(1, 3), 16),
+        parseInt(e.slice(3, 5), 16),
+        parseInt(e.slice(5, 7), 16),
         1
       ];
-    if (/^#[0-9A-Fa-f]{8}$/.test(t))
+    if (/^#[0-9A-Fa-f]{8}$/.test(e))
       return [
-        parseInt(t.slice(1, 3), 16),
-        parseInt(t.slice(3, 5), 16),
-        parseInt(t.slice(5, 7), 16),
-        parseInt(t.slice(7, 9), 16) / 255
+        parseInt(e.slice(1, 3), 16),
+        parseInt(e.slice(3, 5), 16),
+        parseInt(e.slice(5, 7), 16),
+        parseInt(e.slice(7, 9), 16) / 255
       ];
-    const r = t.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+)\s*)?\)$/);
+    const n = e.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+)\s*)?\)$/);
+    if (n)
+      return [
+        parseInt(n[1], 10),
+        parseInt(n[2], 10),
+        parseInt(n[3], 10),
+        n[4] !== void 0 ? parseFloat(n[4]) : 1
+      ];
+    const r = e.match(/^rgba?\(\s*(\d+)\s+(\d+)\s+(\d+)\s*(?:\/\s*([\d.]+)\s*)?\)$/);
     if (r)
       return [
         parseInt(r[1], 10),
@@ -313,30 +487,43 @@ class S {
         parseInt(r[3], 10),
         r[4] !== void 0 ? parseFloat(r[4]) : 1
       ];
-    const n = t.match(/^hsla?\(\s*([\d.]+)\s*,\s*([\d.]+)%\s*,\s*([\d.]+)%\s*(?:,\s*([\d.]+)\s*)?\)$/);
-    if (n) {
-      const s = parseFloat(n[1]) / 360, e = parseFloat(n[2]) / 100, a = parseFloat(n[3]) / 100, i = n[4] !== void 0 ? parseFloat(n[4]) : 1;
-      if (e === 0) {
-        const o = Math.round(a * 255);
-        return [o, o, o, i];
-      }
-      const u = a < 0.5 ? a * (1 + e) : a + e - a * e, l = 2 * a - u, c = (o, f, p) => (p < 0 && (p += 1), p > 1 && (p -= 1), p < 1 / 6 ? o + (f - o) * 6 * p : p < 1 / 2 ? f : p < 2 / 3 ? o + (f - o) * (2 / 3 - p) * 6 : o);
-      return [
-        Math.round(c(l, u, s + 1 / 3) * 255),
-        Math.round(c(l, u, s) * 255),
-        Math.round(c(l, u, s - 1 / 3) * 255),
-        i
-      ];
+    const t = e.match(/^hsla?\(\s*([\d.]+)\s*,\s*([\d.]+)%\s*,\s*([\d.]+)%\s*(?:,\s*([\d.]+)\s*)?\)$/);
+    if (t)
+      return this._hslToRgba(
+        parseFloat(t[1]),
+        parseFloat(t[2]),
+        parseFloat(t[3]),
+        t[4] !== void 0 ? parseFloat(t[4]) : 1
+      );
+    const s = e.match(/^hsla?\(\s*([\d.]+)\s+([\d.]+)%\s+([\d.]+)%\s*(?:\/\s*([\d.]+)\s*)?\)$/);
+    return s ? this._hslToRgba(
+      parseFloat(s[1]),
+      parseFloat(s[2]),
+      parseFloat(s[3]),
+      s[4] !== void 0 ? parseFloat(s[4]) : 1
+    ) : null;
+  }
+  _hslToRgba(e, a, n, r) {
+    const t = e / 360, s = a / 100, i = n / 100;
+    if (s === 0) {
+      const c = Math.round(i * 255);
+      return [c, c, c, r];
     }
-    return [0, 0, 0, 1];
+    const l = i < 0.5 ? i * (1 + s) : i + s - i * s, u = 2 * i - l;
+    return [
+      Math.round($(u, l, t + 1 / 3) * 255),
+      Math.round($(u, l, t) * 255),
+      Math.round($(u, l, t - 1 / 3) * 255),
+      r
+    ];
   }
   /**
    * Test whether a value looks like a CSS color.
    * @param {*} value
    * @returns {boolean}
    */
-  isColor(t) {
-    return typeof t != "string" ? !1 : /^(#[0-9A-Fa-f]{3}$|#[0-9A-Fa-f]{4}$|#[0-9A-Fa-f]{6}$|#[0-9A-Fa-f]{8}$|rgba?\s*\(|hsla?\s*\()/.test(t);
+  isColor(e) {
+    return typeof e != "string" ? !1 : /^(#[0-9A-Fa-f]{3}$|#[0-9A-Fa-f]{4}$|#[0-9A-Fa-f]{6}$|#[0-9A-Fa-f]{8}$|rgba?\s*\(|hsla?\s*\()/.test(e) ? !0 : e.toLowerCase() in M;
   }
   // -- Math --
   /**
@@ -346,8 +533,8 @@ class S {
    * @param {number} factor - 0 = start, 1 = end, extrapolates outside [0,1]
    * @returns {number}
    */
-  lerp(t, r, n) {
-    return t + (r - t) * n;
+  lerp(e, a, n) {
+    return e + (a - e) * n;
   }
   /**
    * Interpolate between two colors, clamping each channel.
@@ -356,13 +543,13 @@ class S {
    * @param {number} factor
    * @returns {ColorValue}
    */
-  lerpColor(t, r, n) {
-    const s = (e, a, i) => Math.min(i, Math.max(a, e));
+  lerpColor(e, a, n) {
+    const r = (t, s, i) => Math.min(i, Math.max(s, t));
     return {
-      red: Math.round(s(this.lerp(t.red, r.red, n), 0, 255)),
-      green: Math.round(s(this.lerp(t.green, r.green, n), 0, 255)),
-      blue: Math.round(s(this.lerp(t.blue, r.blue, n), 0, 255)),
-      alpha: parseFloat(s(this.lerp(t.alpha, r.alpha, n), 0, 1).toFixed(4))
+      red: Math.round(r(this.lerp(e.red, a.red, n), 0, 255)),
+      green: Math.round(r(this.lerp(e.green, a.green, n), 0, 255)),
+      blue: Math.round(r(this.lerp(e.blue, a.blue, n), 0, 255)),
+      alpha: parseFloat(r(this.lerp(e.alpha, a.alpha, n), 0, 1).toFixed(4))
     };
   }
   /**
@@ -370,8 +557,8 @@ class S {
    * @param {number} num
    * @returns {string}
    */
-  format(t) {
-    return parseFloat(Number(t).toFixed(4)).toString();
+  format(e) {
+    return parseFloat(e.toFixed(4)).toString();
   }
   /**
    * Find the two surrounding keyframes and the interpolation factor for a given percent.
@@ -380,24 +567,24 @@ class S {
    * @param {number} percent - The current position (0-100)
    * @returns {{ from: Object, to: Object, factor: number }|null}
    */
-  findFramesAndFactor(t, r) {
-    if (t.length === 0) return null;
-    if (t.length === 1) return { from: t[0], to: t[0], factor: 0 };
-    const n = t[0], s = t[t.length - 1];
-    if (r <= n.percent) {
-      const e = t[1].percent - n.percent;
-      return { from: n, to: t[1], factor: e === 0 ? 1 : (r - n.percent) / e };
+  findFramesAndFactor(e, a) {
+    if (e.length === 0) return null;
+    if (e.length === 1) return { from: e[0], to: e[0], factor: 0 };
+    const n = e[0], r = e[e.length - 1];
+    if (a <= n.percent) {
+      const t = e[1].percent - n.percent;
+      return { from: n, to: e[1], factor: t === 0 ? 1 : (a - n.percent) / t };
     }
-    if (r >= s.percent) {
-      const e = t[t.length - 2], a = s.percent - e.percent;
-      return { from: e, to: s, factor: a === 0 ? 1 : (r - e.percent) / a };
+    if (a >= r.percent) {
+      const t = e[e.length - 2], s = r.percent - t.percent;
+      return { from: t, to: r, factor: s === 0 ? 1 : (a - t.percent) / s };
     }
-    for (let e = 0; e < t.length - 1; e++)
-      if (r >= t[e].percent && r <= t[e + 1].percent) {
-        const a = t[e + 1].percent - t[e].percent;
-        return { from: t[e], to: t[e + 1], factor: a === 0 ? 1 : (r - t[e].percent) / a };
+    for (let t = 0; t < e.length - 1; t++)
+      if (a >= e[t].percent && a <= e[t + 1].percent) {
+        const s = e[t + 1].percent - e[t].percent;
+        return { from: e[t], to: e[t + 1], factor: s === 0 ? 1 : (a - e[t].percent) / s };
       }
-    return { from: s, to: s, factor: 0 };
+    return { from: r, to: r, factor: 0 };
   }
   /**
    * Get the active discrete value for a property at a given percent.
@@ -406,14 +593,14 @@ class S {
    * @param {number} percent - The current position (0-100)
    * @returns {*}
    */
-  getDiscrete(t, r) {
-    const n = this._keyFrames[t] || this.keyframes.filter((e) => t in e.values);
+  getDiscrete(e, a) {
+    const n = this._keyFrames[e] || this.keyframes.filter((t) => e in t.values);
     if (n.length === 0) return null;
-    let s = n[0];
-    for (const e of n)
-      if (e.percent <= r) s = e;
+    let r = n[0];
+    for (const t of n)
+      if (t.percent <= a) r = t;
       else break;
-    return s.values[t].value;
+    return r.values[e].value;
   }
   /**
    * Get the default (identity) value for a CSS function.
@@ -421,9 +608,9 @@ class S {
    * @param {string} key - The flattened key (e.g. "transform:translateX")
    * @returns {NumericValue[]}
    */
-  getDefault(t) {
-    const r = t.split(":")[1];
-    return r && m[r] ? m[r] : [{ value: 0, unit: "" }];
+  getDefault(e) {
+    const a = e.split(":")[1];
+    return a && b[a] ? b[a] : [{ value: 0, unit: "" }];
   }
   // -- Main --
   /**
@@ -431,47 +618,47 @@ class S {
    * @param {number} pos - Animation position where 0 = start, 1 = end. Values outside 0-1 extrapolate.
    * @returns {InterpolatedStyles} An object of CSS property names to their computed string values.
    */
-  getFrame(t) {
-    const r = t * 100, n = this._allKeys, s = {};
-    for (const e of n) {
-      const a = this._keyFrames[e];
-      if (!a || a.length === 0) continue;
-      const i = a[0].values[e];
+  getFrame(e) {
+    const a = e * 100, n = this._allKeys, r = {};
+    for (const t of n) {
+      const s = this._keyFrames[t];
+      if (!s || s.length === 0) continue;
+      const i = s[0].values[t];
       if (i && i.discrete) {
-        s[e] = this.getDiscrete(e, r);
+        r[t] = this.getDiscrete(t, a);
         continue;
       }
-      const { from: u, to: l, factor: c } = this.findFramesAndFactor(a, r), o = u.values[e], f = l.values[e];
+      const { from: l, to: u, factor: c } = this.findFramesAndFactor(s, a), o = l.values[t], d = u.values[t];
       if (o && "red" in o) {
-        s[e] = this.lerpColor(o, f, c);
+        r[t] = this.lerpColor(o, d, c);
         continue;
       }
       if (o && o.args) {
-        const p = f.args || this.getDefault(e), d = this.getDefault(e), v = Math.max(o.args.length, p.length), b = [];
-        for (let h = 0; h < v; h++) {
-          const k = o.args[h] || d[h] || { value: 0, unit: "" }, x = p[h] || d[h] || { value: 0, unit: "" };
-          b.push({ value: this.lerp(k.value, x.value, c), unit: k.unit || x.unit });
+        const m = d.args || this.getDefault(t), h = this.getDefault(t), v = Math.max(o.args.length, m.length), k = [];
+        for (let f = 0; f < v; f++) {
+          const x = o.args[f] || h[f] || { value: 0, unit: "" }, _ = m[f] || h[f] || { value: 0, unit: "" };
+          k.push({ value: this.lerp(x.value, _.value, c), unit: x.unit || _.unit });
         }
-        const _ = e.includes(":") ? e.substring(e.indexOf(":") + 1) : e, y = w[_];
-        if (y)
-          for (const h of b)
-            h.value = Math.min(y[1], Math.max(y[0], h.value));
-        const F = { args: b };
-        (o.color || f.color) && (F.color = this.lerpColor(
-          o.color || $,
-          f.color || $,
+        const S = t.includes(":") ? t.substring(t.indexOf(":") + 1) : t, w = I[S];
+        if (w)
+          for (const f of k)
+            f.value = Math.min(w[1], Math.max(w[0], f.value));
+        const F = { args: k };
+        (o.color || d.color) && (F.color = this.lerpColor(
+          o.color || y,
+          d.color || y,
           c
-        )), s[e] = F;
+        )), r[t] = F;
         continue;
       }
       if (o && "value" in o) {
-        const p = f || this.getDefault(e)[0];
-        let d = this.lerp(o.value, p.value, c);
-        const v = w[e];
-        v && (d = Math.min(v[1], Math.max(v[0], d))), s[e] = { value: d, unit: o.unit };
+        const m = d || this.getDefault(t)[0];
+        let h = this.lerp(o.value, m.value, c);
+        const v = I[t];
+        v && (h = Math.min(v[1], Math.max(v[0], h))), r[t] = { value: h, unit: o.unit };
       }
     }
-    return this.toStyles(s);
+    return this.toStyles(r);
   }
   // -- Output --
   /**
@@ -480,49 +667,49 @@ class S {
    * @param {Object<string, NumericValue|ColorValue|MultiArgValue|*>} results
    * @returns {InterpolatedStyles}
    */
-  toStyles(t) {
-    const r = {}, n = {};
-    for (const s in t) {
-      const e = t[s], a = s.indexOf(":");
-      if (a !== -1) {
-        const i = s.substring(0, a), u = s.substring(a + 1);
+  toStyles(e) {
+    const a = {}, n = {};
+    for (const r in e) {
+      const t = e[r], s = r.indexOf(":");
+      if (s !== -1) {
+        const i = r.substring(0, s), l = r.substring(s + 1);
         if (g.has(i)) {
-          if (n[i] || (n[i] = {}), e.args)
-            if (u.startsWith("drop-shadow-")) {
-              const l = u.replace(/-\d+$/, ""), c = e.args.map((o) => `${this.format(o.value)}${o.unit}`).join(" ");
-              if (e.color) {
-                const o = e.color, f = o.alpha < 1 ? `rgba(${o.red},${o.green},${o.blue},${o.alpha})` : `rgb(${o.red},${o.green},${o.blue})`;
-                n[i][u] = `${l}(${c} ${f})`;
+          if (n[i] || (n[i] = {}), t.args)
+            if (l.startsWith("drop-shadow-")) {
+              const u = l.replace(/-\d+$/, ""), c = t.args.map((o) => `${this.format(o.value)}${o.unit}`).join(" ");
+              if (t.color) {
+                const o = t.color, d = o.alpha < 1 ? `rgba(${o.red},${o.green},${o.blue},${o.alpha})` : `rgb(${o.red},${o.green},${o.blue})`;
+                n[i][l] = `${u}(${c} ${d})`;
               } else
-                n[i][u] = `${l}(${c})`;
+                n[i][l] = `${u}(${c})`;
             } else
-              n[i][u] = `${u}(${e.args.map((l) => `${this.format(l.value)}${l.unit}`).join(", ")})`;
+              n[i][l] = `${l}(${t.args.map((u) => `${this.format(u.value)}${u.unit}`).join(", ")})`;
           else
-            n[i][u] = `${u}(${this.format(e.value)}${e.unit})`;
+            n[i][l] = `${l}(${this.format(t.value)}${t.unit})`;
           continue;
         }
       }
-      if (typeof e == "string" || typeof e == "number") {
-        r[s] = e;
+      if (typeof t == "string" || typeof t == "number") {
+        a[r] = t;
         continue;
       }
-      if (e && "red" in e) {
-        r[s] = e.alpha < 1 ? `rgba(${e.red},${e.green},${e.blue},${e.alpha})` : `rgb(${e.red},${e.green},${e.blue})`;
+      if (t && "red" in t) {
+        a[r] = t.alpha < 1 ? `rgba(${t.red},${t.green},${t.blue},${t.alpha})` : `rgb(${t.red},${t.green},${t.blue})`;
         continue;
       }
-      if (e && "value" in e) {
-        r[s] = `${this.format(e.value)}${e.unit}`;
+      if (t && "value" in t) {
+        a[r] = `${this.format(t.value)}${t.unit}`;
         continue;
       }
-      r[s] = e;
+      a[r] = t;
     }
-    for (const s in n) {
-      const e = n[s], i = (this._orders[s] || Object.keys(e)).filter((u) => e[u]).map((u) => e[u]);
-      i.length > 0 && (r[s] = i.join(" "));
+    for (const r in n) {
+      const t = n[r], i = (this._orders[r] || Object.keys(t)).filter((l) => t[l]).map((l) => t[l]);
+      i.length > 0 && (a[r] = i.join(" "));
     }
-    return r;
+    return a;
   }
 }
 export {
-  S as default
+  C as default
 };
