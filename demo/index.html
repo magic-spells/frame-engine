@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <title>Frame Engine — @magic-spells</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-deep: #07060b;
+      --bg-card: #0f0e14;
+      --bg-card-hover: #15141c;
+      --border: #1e1c28;
+      --border-accent: #2a2636;
+      --gold: #c9a84c;
+      --gold-dim: #8a7233;
+      --gold-glow: rgba(201, 168, 76, 0.12);
+      --cream: #e8e0cc;
+      --cream-dim: #9a9284;
+      --text: #c4bfb2;
+      --text-dim: #6b665c;
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body: 'Outfit', system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--bg-deep);
+    }
+
+    body {
+      font-family: var(--font-body);
+      font-weight: 300;
+      color: var(--text);
+      background: var(--bg-deep);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---- Noise overlay ---- */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 256px;
+    }
+
+    /* ---- Hero ---- */
+    .hero {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 70vh;
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 900px;
+      height: 900px;
+      background: radial-gradient(ellipse, var(--gold-glow) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      font-family: var(--font-body);
+      font-weight: 400;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border: 1px solid var(--border-accent);
+      padding: 0.4em 1.4em;
+      border-radius: 100px;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.2s;
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-weight: 300;
+      font-size: clamp(3rem, 8vw, 7rem);
+      line-height: 1.05;
+      color: var(--cream);
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 0.4s;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .hero p {
+      max-width: 520px;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: var(--text-dim);
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 0.65s;
+    }
+
+    .hero-line {
+      width: 1px;
+      height: 80px;
+      background: linear-gradient(to bottom, var(--gold-dim), transparent);
+      margin-top: 3rem;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 0.85s;
+    }
+
+    /* ---- Sections ---- */
+    .demos {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+    }
+
+    .demo-section {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      transition: border-color 0.4s ease, background 0.4s ease;
+    }
+
+    .demo-section:hover {
+      border-color: var(--border-accent);
+      background: var(--bg-card-hover);
+    }
+
+    .demo-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .demo-section h2 {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: 1.8rem;
+      color: var(--cream);
+      letter-spacing: -0.01em;
+    }
+
+    .demo-desc {
+      font-size: 0.88rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      max-width: 560px;
+    }
+
+    /* ---- Stage (demo area) ---- */
+    .stage {
+      position: relative;
+      width: 100%;
+      height: 200px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.01) 0%, rgba(255,255,255,0.03) 100%);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+
+    .stage-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.3;
+    }
+
+    /* ---- Slider ---- */
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .slider-label {
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      min-width: 60px;
+    }
+
+    .slider-value {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: var(--gold);
+      min-width: 50px;
+      text-align: right;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      flex: 1;
+      height: 2px;
+      background: var(--border-accent);
+      border-radius: 1px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--gold);
+      border: none;
+      box-shadow: 0 0 20px rgba(201, 168, 76, 0.35);
+      transition: box-shadow 0.2s ease;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      box-shadow: 0 0 30px rgba(201, 168, 76, 0.55);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--gold);
+      border: none;
+      box-shadow: 0 0 20px rgba(201, 168, 76, 0.35);
+    }
+
+    /* ---- Demo objects ---- */
+    .tween-box {
+      position: absolute;
+      border-radius: 8px;
+      will-change: transform, opacity, background-color, filter;
+    }
+
+    /* ---- Keyframe readout ---- */
+    .readout {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem 2rem;
+    }
+
+    .readout-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .readout-key {
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .readout-val {
+      font-family: 'Courier New', monospace;
+      font-size: 0.78rem;
+      color: var(--cream-dim);
+      word-break: break-all;
+    }
+
+    /* ---- Color swatches for color demo ---- */
+    .color-strip {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      border-radius: 0 0 10px 10px;
+      transition: background-color 0.05s linear;
+    }
+
+    /* ---- Animations ---- */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ---- Responsive ---- */
+    @media (max-width: 640px) {
+      .demo-section { padding: 1.5rem; }
+      .stage { height: 160px; }
+      .readout { gap: 0.75rem 1.25rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ======== HERO ======== -->
+  <header class="hero">
+    <div class="hero-badge">@magic-spells</div>
+    <h1>Frame<br /><em>Engine</em></h1>
+    <p>Position-driven CSS keyframe interpolation. Colors, transforms, filters, opacity — calculated between any number of keyframes in real time.</p>
+    <div class="hero-line"></div>
+  </header>
+
+  <!-- ======== DEMOS ======== -->
+  <main class="demos">
+
+    <!-- ---- 01 Color Interpolation ---- -->
+    <section class="demo-section" id="demo-color">
+      <div class="demo-header">
+        <h2>Color Interpolation</h2>
+      </div>
+      <p class="demo-desc">Smooth RGB channel blending across four color stops. Hex values are decomposed, interpolated per-channel, and recomposed.</p>
+      <div class="stage">
+        <div class="stage-grid"></div>
+        <div class="tween-box" id="color-box" style="
+          left: 50%; top: 50%; transform: translate(-50%, -50%);
+          width: 120px; height: 120px; border-radius: 50%;
+          background-color: #c9a84c;
+          box-shadow: 0 0 60px rgba(201,168,76,0.3);
+        "></div>
+        <div class="color-strip" id="color-strip"></div>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">Position</span>
+        <input type="range" id="color-slider" min="0" max="100" value="0" step="1" />
+        <span class="slider-value" id="color-slider-val">0%</span>
+      </div>
+      <div class="readout" id="color-readout"></div>
+    </section>
+
+    <!-- ---- 02 Transform Dance ---- -->
+    <section class="demo-section" id="demo-transform">
+      <div class="demo-header">
+        <h2>Transform Composition</h2>
+      </div>
+      <p class="demo-desc">Independent interpolation of translateX, rotate, and scale within a single compound transform string. Each function is parsed and tweened separately.</p>
+      <div class="stage">
+        <div class="stage-grid"></div>
+        <div class="tween-box" id="transform-box" style="
+          left: 30px; top: 50px;
+          width: 90px; height: 90px;
+          background: var(--gold);
+          border-radius: 8px;
+        "></div>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">Position</span>
+        <input type="range" id="transform-slider" min="0" max="100" value="0" step="1" />
+        <span class="slider-value" id="transform-slider-val">0%</span>
+      </div>
+      <div class="readout" id="transform-readout"></div>
+    </section>
+
+    <!-- ---- 03 Filter Effects ---- -->
+    <section class="demo-section" id="demo-filter">
+      <div class="demo-header">
+        <h2>Filter Effects</h2>
+      </div>
+      <p class="demo-desc">CSS filter functions — blur, brightness, hue-rotate — each interpolated as independent numeric values within the filter string.</p>
+      <div class="stage">
+        <div class="stage-grid"></div>
+        <div class="tween-box" id="filter-box" style="
+          left: 50%; top: 50%; transform: translate(-50%, -50%);
+          width: 140px; height: 100px;
+          background: linear-gradient(135deg, #c9a84c, #e8c96a);
+          border-radius: 12px;
+        "></div>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">Position</span>
+        <input type="range" id="filter-slider" min="0" max="100" value="0" step="1" />
+        <span class="slider-value" id="filter-slider-val">0%</span>
+      </div>
+      <div class="readout" id="filter-readout"></div>
+    </section>
+
+    <!-- ---- 04 Multi-Property Orchestra ---- -->
+    <section class="demo-section" id="demo-multi">
+      <div class="demo-header">
+        <h2>Multi-Property Orchestra</h2>
+      </div>
+      <p class="demo-desc">Everything at once — color, transform, opacity, border-width, and filters all interpolated from a single position value across four keyframes.</p>
+      <div class="stage" style="height: 240px;">
+        <div class="stage-grid"></div>
+        <div class="tween-box" id="multi-box" style="
+          left: 30px; top: 70px;
+          width: 100px; height: 100px;
+          background-color: #c9a84c;
+          border: 2px solid rgba(255,255,255,0.15);
+          border-radius: 10px;
+        "></div>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">Position</span>
+        <input type="range" id="multi-slider" min="0" max="110" value="0" step="1" />
+        <span class="slider-value" id="multi-slider-val">0%</span>
+      </div>
+      <div class="readout" id="multi-readout"></div>
+    </section>
+
+  </main>
+
+  <script src="./frame-engine.min.js"></script>
+  <script>
+    // ---- Helpers ----
+    function applyStyles(el, styles) {
+      for (const [prop, value] of Object.entries(styles)) {
+        el.style[prop] = value;
+      }
+    }
+
+    function renderReadout(container, styles) {
+      container.innerHTML = Object.entries(styles)
+        .map(([k, v]) =>
+          `<div class="readout-item">
+            <span class="readout-key">${k}</span>
+            <span class="readout-val">${v}</span>
+          </div>`
+        ).join('');
+    }
+
+    function wireDemo(sliderId, valueId, readoutId, calculator, applyFn) {
+      const slider = document.getElementById(sliderId);
+      const valDisplay = document.getElementById(valueId);
+      const readout = document.getElementById(readoutId);
+
+      slider.addEventListener('input', () => {
+        const pos = parseInt(slider.value) / 100;
+        const styles = calculator.getFrame(pos);
+        valDisplay.textContent = slider.value + '%';
+        applyFn(styles);
+        renderReadout(readout, styles);
+      });
+
+      // fire initial
+      slider.dispatchEvent(new Event('input'));
+    }
+
+    // ========================================
+    // 01 — Color Interpolation
+    // ========================================
+    const colorCalc = new FrameEngine([
+      { percent: 0,   styles: { backgroundColor: '#c9a84c' } },
+      { percent: 30,  styles: { backgroundColor: '#e85d75' } },
+      { percent: 60,  styles: { backgroundColor: '#6c5ce7' } },
+      { percent: 100, styles: { backgroundColor: '#00b894' } },
+    ]);
+
+    wireDemo('color-slider', 'color-slider-val', 'color-readout', colorCalc, (styles) => {
+      const box = document.getElementById('color-box');
+      const strip = document.getElementById('color-strip');
+      applyStyles(box, styles);
+      box.style.boxShadow = `0 0 60px ${styles.backgroundColor}44, 0 0 120px ${styles.backgroundColor}22`;
+      strip.style.backgroundColor = styles.backgroundColor;
+    });
+
+    // ========================================
+    // 02 — Transform Composition
+    // ========================================
+    const transformCalc = new FrameEngine([
+      { percent: 0,   styles: { transform: 'translateX(0px) rotate(0deg) scale(1)' } },
+      { percent: 40,  styles: { transform: 'translateX(300px) rotate(180deg) scale(0.6)' } },
+      { percent: 70,  styles: { transform: 'translateX(500px) rotate(-90deg) scale(1.3)' } },
+      { percent: 100, styles: { transform: 'translateX(850px) rotate(360deg) scale(1)' } },
+    ]);
+
+    wireDemo('transform-slider', 'transform-slider-val', 'transform-readout', transformCalc, (styles) => {
+      applyStyles(document.getElementById('transform-box'), styles);
+    });
+
+    // ========================================
+    // 03 — Filter Effects
+    // ========================================
+    const filterCalc = new FrameEngine([
+      { percent: 0,   styles: { filter: 'blur(0px) brightness(1) hue-rotate(0deg)' } },
+      { percent: 50,  styles: { filter: 'blur(6px) brightness(1.5) hue-rotate(90deg)' } },
+      { percent: 100, styles: { filter: 'blur(0px) brightness(0.7) hue-rotate(270deg)' } },
+    ]);
+
+    wireDemo('filter-slider', 'filter-slider-val', 'filter-readout', filterCalc, (styles) => {
+      applyStyles(document.getElementById('filter-box'), styles);
+    });
+
+    // ========================================
+    // 04 — Multi-Property Orchestra
+    // ========================================
+    const multiCalc = new FrameEngine([
+      {
+        percent: 0,
+        styles: {
+          transform: 'translateX(0px) rotate(0deg) scale(1)',
+          backgroundColor: '#c9a84c',
+          opacity: 1,
+          borderWidth: '2px',
+          borderRadius: '10px',
+        },
+      },
+      {
+        percent: 35,
+        styles: {
+          transform: 'translateX(200px) rotate(-90deg) scale(0.7)',
+          backgroundColor: '#e85d75',
+          opacity: 0.4,
+          borderWidth: '12px',
+          borderRadius: '50px',
+        },
+      },
+      {
+        percent: 70,
+        styles: {
+          transform: 'translateX(500px) rotate(180deg) scale(1.4)',
+          backgroundColor: '#6c5ce7',
+          opacity: 0.9,
+          borderWidth: '4px',
+          borderRadius: '4px',
+        },
+      },
+      {
+        percent: 100,
+        styles: {
+          transform: 'translateX(850px) rotate(360deg) scale(1)',
+          backgroundColor: '#00b894',
+          opacity: 1,
+          borderWidth: '2px',
+          borderRadius: '10px',
+        },
+      },
+    ]);
+
+    wireDemo('multi-slider', 'multi-slider-val', 'multi-readout', multiCalc, (styles) => {
+      const box = document.getElementById('multi-box');
+      applyStyles(box, styles);
+      box.style.boxShadow = `0 8px 40px ${styles.backgroundColor}33`;
+    });
+  </script>
+</body>
+</html>
