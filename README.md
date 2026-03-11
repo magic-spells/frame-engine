@@ -1,5 +1,7 @@
 # @magic-spells/frame-engine
 
+**~5 KB** gzipped · zero dependencies
+
 Calculate intermediate CSS styles between keyframes at any position. Parses keyframe data upfront so interpolation is pure math on the hot path — no string parsing at runtime.
 
 🔍 **[Live Demo](https://magic-spells.github.io/frame-engine/demo/)** - See it in action!
@@ -30,7 +32,7 @@ Object.assign(element.style, styles);
 
 ## Keyframe format
 
-Keyframes are an object where keys are percent positions (0-100) and values are CSS property/value pairs:
+Keyframes are an object where keys are percent positions (0-100) and values are CSS property/value pairs. Use **camelCase** property names (e.g. `backgroundColor`, not `background-color`) — the engine passes them through as-is, and `element.style` expects camelCase.
 
 ```js
 {
@@ -38,7 +40,7 @@ Keyframes are an object where keys are percent positions (0-100) and values are 
   50: {
     opacity: '0.5',
     transform: 'translateX(100px) rotate(45deg)',
-    'background-color': '#ff0000',
+    backgroundColor: '#ff0000',
   },
   100: { opacity: '0' },
 }

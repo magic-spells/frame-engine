@@ -63,8 +63,8 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 70vh;
-      padding: 4rem 2rem;
+      min-height: 50vh;
+      padding: 2.5rem 2rem 3rem;
       text-align: center;
     }
 
@@ -366,11 +366,104 @@
       will-change: transform, opacity, background-color;
     }
 
+    /* ---- Code example ---- */
+    .code-example {
+      max-width: 1100px;
+      margin: 0 auto 3rem;
+      padding: 0 1.5rem;
+    }
+
+    .code-card {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      overflow: hidden;
+    }
+
+    .code-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+      opacity: 0.4;
+    }
+
+    .code-card h2 {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: 1.8rem;
+      color: var(--cream);
+      letter-spacing: -0.01em;
+      margin-bottom: 0.5rem;
+    }
+
+    .code-card .code-desc {
+      font-size: 0.88rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+      margin-bottom: 1.75rem;
+      max-width: 560px;
+    }
+
+    .code-blocks {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    .code-block {
+      position: relative;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .code-block-label {
+      display: block;
+      font-family: var(--font-body);
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding: 0.75rem 1.25rem 0;
+    }
+
+    .code-block pre {
+      margin: 0;
+      padding: 0.75rem 1.25rem 1.25rem;
+      overflow-x: auto;
+    }
+
+    .code-block code {
+      font-family: 'Courier New', monospace;
+      font-size: 0.78rem;
+      line-height: 1.7;
+      color: var(--cream-dim);
+      white-space: pre;
+    }
+
+    /* Syntax highlights */
+    .code-block code .kw { color: #c9a84c; }
+    .code-block code .fn { color: #e8c96a; }
+    .code-block code .str { color: #00b894; }
+    .code-block code .num { color: #e85d75; }
+    .code-block code .cm { color: var(--text-dim); }
+    .code-block code .prop { color: #6c9fe7; }
+
     /* ---- Responsive ---- */
     @media (max-width: 640px) {
       .demo-section { padding: 1.5rem; }
       .stage { height: 160px; }
       .readout { gap: 0.75rem 1.25rem; }
+      .code-blocks { grid-template-columns: 1fr; }
+      .code-card { padding: 1.5rem; }
     }
   </style>
 </head>
@@ -384,6 +477,39 @@
     <p>Position-driven CSS keyframe interpolation. Colors, transforms, filters, opacity — calculated between any number of keyframes in real time.</p>
     <div class="hero-line"></div>
   </header>
+
+  <!-- ======== CODE EXAMPLE ======== -->
+  <div class="code-example">
+    <div class="code-card">
+      <h2>Quick Start</h2>
+      <p class="code-desc">Define keyframes as CSS style objects at percentage positions. Call <code style="color:var(--gold);font-size:0.85em;">getFrame()</code> with any value from 0 to 1 to get interpolated styles.</p>
+      <div class="code-blocks">
+        <div class="code-block">
+          <span class="code-block-label">Setup</span>
+          <pre><code><span class="kw">import</span> FrameEngine <span class="kw">from</span> <span class="str">'@magic-spells/frame-engine'</span>
+
+<span class="kw">const</span> animation = <span class="kw">new</span> <span class="fn">FrameEngine</span>({
+  <span class="num">0</span>:   { <span class="prop">opacity</span>: <span class="str">'1'</span>,   <span class="prop">transform</span>: <span class="str">'translateX(0px)'</span> },
+  <span class="num">50</span>:  { <span class="prop">opacity</span>: <span class="str">'0.5'</span>, <span class="prop">transform</span>: <span class="str">'translateX(200px)'</span> },
+  <span class="num">100</span>: { <span class="prop">opacity</span>: <span class="str">'0'</span>,   <span class="prop">transform</span>: <span class="str">'translateX(400px)'</span> },
+})</code></pre>
+        </div>
+        <div class="code-block">
+          <span class="code-block-label">Usage</span>
+          <pre><code><span class="cm">// Get styles at any position (0–1)</span>
+<span class="kw">const</span> styles = animation.<span class="fn">getFrame</span>(<span class="num">0.5</span>)
+<span class="cm">// → { opacity: '0.5', transform: 'translateX(200px)' }</span>
+
+<span class="cm">// Apply to an element</span>
+Object.<span class="fn">assign</span>(element.style, styles)
+
+<span class="cm">// Works beyond 0–1 for overshoot</span>
+animation.<span class="fn">getFrame</span>(<span class="num">1.2</span>)
+<span class="cm">// → extrapolated values past 100%</span></code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- ======== DEMOS ======== -->
   <main class="demos">
@@ -619,6 +745,7 @@
     import FrameEngine from '../src/frame-engine.js';
     // ---- Helpers ----
     function applyStyles(el, styles) {
+      console.log('getFrame →', styles);
       for (const [prop, value] of Object.entries(styles)) {
         el.style[prop] = value;
       }

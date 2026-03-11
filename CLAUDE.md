@@ -12,7 +12,7 @@ Function-list properties (transform, filter, backdrop-filter) are "flattened" in
 
 ## Keyframe format
 
-Keyframes are passed as an object where keys are percent positions (0-100) and values are CSS style objects:
+Keyframes are passed as an object where keys are percent positions (0-100) and values are CSS style objects. Property names must use **camelCase** (e.g. `backgroundColor`, not `background-color`) — the engine passes them through as-is to `element.style`, which expects camelCase.
 
 ```js
 new FrameEngine({
