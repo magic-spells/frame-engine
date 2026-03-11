@@ -2,6 +2,8 @@
 
 Calculate intermediate CSS styles between keyframes at any position. Parses keyframe data upfront so interpolation is pure math on the hot path — no string parsing at runtime.
 
+🔍 **[Live Demo](https://magic-spells.github.io/frame-engine/demo/)** - See it in action!
+
 ## Install
 
 ```bash
