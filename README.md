@@ -13,10 +13,10 @@ npm install @magic-spells/frame-engine
 ```js
 import FrameEngine from '@magic-spells/frame-engine';
 
-const tween = new FrameEngine([
-  { percent: 0,   styles: { opacity: '0', transform: 'translateX(0px) scale(0.5)' } },
-  { percent: 100, styles: { opacity: '1', transform: 'translateX(200px) scale(1)' } }
-]);
+const tween = new FrameEngine({
+  0:   { opacity: '0', transform: 'translateX(0px) scale(0.5)' },
+  100: { opacity: '1', transform: 'translateX(200px) scale(1)' },
+});
 
 // Get styles at 50% through the animation
 const styles = tween.getFrame(0.5);
@@ -28,16 +28,17 @@ Object.assign(element.style, styles);
 
 ## Keyframe format
 
-Each keyframe is an object with `percent` (0-100) and `styles` (CSS property/value pairs):
+Keyframes are an object where keys are percent positions (0-100) and values are CSS property/value pairs:
 
 ```js
 {
-  percent: 50,
-  styles: {
+  0:  { opacity: '1' },
+  50: {
     opacity: '0.5',
     transform: 'translateX(100px) rotate(45deg)',
-    'background-color': '#ff0000'
-  }
+    'background-color': '#ff0000',
+  },
+  100: { opacity: '0' },
 }
 ```
 
@@ -64,13 +65,13 @@ Positions outside 0-1 are extrapolated automatically. If you call `getFrame(-0.5
 
 Create a calculator and parse the keyframes.
 
-- **keyframes** `Array<{ percent: number, styles: Object }>` — Keyframes in any order (sorted internally by percent).
+- **keyframes** `Record<number, Object>` — Object mapping percent positions (0-100) to CSS style objects.
 
 ### `setKeyframes(keyframes)`
 
 Replace the current keyframes and re-parse.
 
-- **keyframes** `Array<{ percent: number, styles: Object }>` — New keyframes.
+- **keyframes** `Record<number, Object>` — Object mapping percent positions (0-100) to CSS style objects.
 
 ### `getFrame(position) → Object`
 

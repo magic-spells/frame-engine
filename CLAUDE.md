@@ -10,12 +10,24 @@ Calculates intermediate CSS styles between keyframes at any position (0-1). Used
 
 Function-list properties (transform, filter, backdrop-filter) are "flattened" into individual keyed entries like `transform:translateX`, `transform:scale`, with a `transform:__order` key to track reassembly order.
 
+## Keyframe format
+
+Keyframes are passed as an object where keys are percent positions (0-100) and values are CSS style objects:
+
+```js
+new FrameEngine({
+  0:   { opacity: '1', transform: 'translateX(0px)' },
+  50:  { opacity: '0.5', transform: 'translateX(200px)' },
+  100: { opacity: '0', transform: 'translateX(400px)' },
+})
+```
+
 ## Key files
 
 - `src/frame-engine.js` — The entire library (single class, no dependencies)
 - `src/frame-engine.d.ts` — TypeScript declarations for the public API
 - `dist/frame-engine.min.js` — UMD build (production)
-- `demo/index.html` — Manual testing page (served on port 3009 in dev mode)
+- `demo/index.html` — Manual testing page with physics engine integration (served on port 3009 in dev mode)
 - `rollup.config.mjs` — Builds to both `dist/` and `demo/` directories
 
 ## Commands

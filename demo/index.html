@@ -315,6 +315,57 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    /* ---- Buttons ---- */
+    .controls {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      font-family: var(--font-body);
+      font-weight: 400;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cream);
+      background: transparent;
+      border: 1px solid var(--border-accent);
+      padding: 0.6em 1.6em;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      border-color: var(--gold-dim);
+      color: var(--gold);
+      box-shadow: 0 0 20px rgba(201, 168, 76, 0.1);
+    }
+
+    .btn.active {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(201, 168, 76, 0.06);
+    }
+
+    .btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    /* ---- Cascade dots ---- */
+    .cascade-dot {
+      position: absolute;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--gold);
+      will-change: transform, opacity, background-color;
+    }
+
     /* ---- Responsive ---- */
     @media (max-width: 640px) {
       .demo-section { padding: 1.5rem; }
@@ -425,14 +476,145 @@
       </div>
       <div class="slider-row">
         <span class="slider-label">Position</span>
-        <input type="range" id="multi-slider" min="0" max="110" value="0" step="1" />
+        <input type="range" id="multi-slider" min="0" max="120" value="0" step="1" />
         <span class="slider-value" id="multi-slider-val">0%</span>
       </div>
       <div class="readout" id="multi-readout"></div>
     </section>
 
+    <!-- ---- 05 Extrapolation & Clamping ---- -->
+    <section class="demo-section" id="demo-extrap">
+      <div class="demo-header">
+        <h2>Extrapolation &amp; Clamping</h2>
+      </div>
+      <p class="demo-desc">Drag past 100% to see physics-friendly overshoot. Position and custom properties extrapolate freely while bounded properties like opacity clamp to valid CSS ranges.</p>
+      <div class="stage" style="height: 200px;">
+        <div class="stage-grid"></div>
+        <div class="tween-box" id="extrap-box" style="
+          left: 30px; top: 50px;
+          width: 90px; height: 90px;
+          background: var(--gold);
+          border-radius: 10px;
+        "></div>
+        <!-- end marker -->
+        <div style="position:absolute; left: 850px; top: 0; bottom: 0; width: 1px; background: var(--gold-dim); opacity: 0.4;"></div>
+        <div style="position:absolute; left: 840px; top: 10px; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold-dim); opacity: 0.6;">100%</div>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">Position</span>
+        <input type="range" id="extrap-slider" min="0" max="150" value="0" step="1" />
+        <span class="slider-value" id="extrap-slider-val">0%</span>
+      </div>
+      <div class="readout" id="extrap-readout"></div>
+    </section>
+
+    <!-- ---- 06 Metamorphosis ---- -->
+    <section class="demo-section">
+      <div class="demo-header">
+        <h2>Metamorphosis</h2>
+      </div>
+      <p class="demo-desc">Driven by <code style="color:var(--gold);font-size:0.85em;">@magic-spells/physics-engine</code> — a spring drives progress through five Frame Engine keyframes. The orb morphs color, border-radius, scale, and glow with natural overshoot and settle.</p>
+      <div class="stage" style="height: 260px;">
+        <div class="stage-grid"></div>
+        <div class="tween-box" id="morph-orb" style="
+          left: 50%; top: 50%;
+          transform: translate(-50%, -50%) scale(1);
+          width: 130px; height: 130px;
+          border-radius: 50%;
+          background-color: #c9a84c;
+          box-shadow: 0 0 60px rgba(201,168,76,0.3);
+        "></div>
+      </div>
+      <div class="controls">
+        <button class="btn" id="morph-go">Morph</button>
+        <button class="btn" id="morph-stop">Stop</button>
+        <button class="btn" id="morph-reset">Reset</button>
+      </div>
+      <div class="readout" id="morph-readout"></div>
+    </section>
+
+    <!-- ---- 07 Spring Traverse ---- -->
+    <section class="demo-section">
+      <div class="demo-header">
+        <h2>Spring Traverse</h2>
+      </div>
+      <p class="demo-desc">Driven by <code style="color:var(--gold);font-size:0.85em;">@magic-spells/physics-engine</code> — a spring propels a shape across the stage. Frame Engine maps the spring progress to compound transforms, color shifts, and border-radius.</p>
+      <div class="stage" style="height: 200px;">
+        <div class="stage-grid"></div>
+        <div class="tween-box" id="traverse-box" style="
+          left: 30px; top: 55px;
+          width: 80px; height: 80px;
+          background: var(--gold);
+          border-radius: 8px;
+        "></div>
+      </div>
+      <div class="controls">
+        <button class="btn" id="traverse-toggle">Go</button>
+        <button class="btn" id="traverse-stop">Stop</button>
+      </div>
+      <div class="readout" id="traverse-readout"></div>
+    </section>
+
+    <!-- ---- 08 Parameter Lab ---- -->
+    <section class="demo-section">
+      <div class="demo-header">
+        <h2>Parameter Lab</h2>
+      </div>
+      <p class="demo-desc">Driven by <code style="color:var(--gold);font-size:0.85em;">@magic-spells/physics-engine</code> — adjust attraction and friction to feel how spring dynamics change. Higher attraction snaps faster. Higher friction damps the bounce.</p>
+      <div class="stage" style="height: 200px;">
+        <div class="stage-grid"></div>
+        <div class="tween-box" id="lab-box" style="
+          left: 30px; top: 55px;
+          width: 80px; height: 80px;
+          background: var(--gold);
+          border-radius: 10px;
+        "></div>
+      </div>
+      <div class="controls">
+        <button class="btn" id="lab-run">Run</button>
+      </div>
+      <div class="slider-row" style="margin-bottom: 0.75rem;">
+        <span class="slider-label">Attraction</span>
+        <input type="range" id="lab-attraction" min="5" max="80" value="26" step="1" />
+        <span class="slider-value" id="lab-attraction-val">0.026</span>
+      </div>
+      <div class="slider-row" style="margin-bottom: 0.75rem;">
+        <span class="slider-label">Friction</span>
+        <input type="range" id="lab-friction" min="5" max="80" value="28" step="1" />
+        <span class="slider-value" id="lab-friction-val">0.28</span>
+      </div>
+      <div class="slider-row" style="margin-bottom: 0.75rem;">
+        <span class="slider-label">Distance</span>
+        <input type="range" id="lab-distance" min="300" max="2000" value="1200" step="50" />
+        <span class="slider-value" id="lab-distance-val">1200</span>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">Velocity</span>
+        <input type="range" id="lab-velocity" min="0" max="100" value="20" step="1" />
+        <span class="slider-value" id="lab-velocity-val">20</span>
+      </div>
+      <div class="readout" id="lab-readout"></div>
+    </section>
+
+    <!-- ---- 09 Cascade ---- -->
+    <section class="demo-section">
+      <div class="demo-header">
+        <h2>Cascade</h2>
+      </div>
+      <p class="demo-desc">Driven by <code style="color:var(--gold);font-size:0.85em;">@magic-spells/physics-engine</code> — eight elements, each with its own spring, launched in sequence. The same Frame Engine keyframes on every dot — staggered timing creates a wave of color and motion.</p>
+      <div class="stage" style="height: 200px;" id="cascade-stage">
+        <div class="stage-grid"></div>
+      </div>
+      <div class="controls">
+        <button class="btn" id="cascade-go">Cascade</button>
+        <button class="btn" id="cascade-stop">Stop All</button>
+      </div>
+      <div class="readout" id="cascade-readout"></div>
+    </section>
+
   </main>
 
+  <script src="./physics-engine.min.js"></script>
   <script src="./frame-engine.min.js"></script>
   <script>
     // ---- Helpers ----
@@ -472,12 +654,12 @@
     // ========================================
     // 01 — Color Interpolation
     // ========================================
-    const colorCalc = new FrameEngine([
-      { percent: 0,   styles: { backgroundColor: '#c9a84c' } },
-      { percent: 30,  styles: { backgroundColor: '#e85d75' } },
-      { percent: 60,  styles: { backgroundColor: '#6c5ce7' } },
-      { percent: 100, styles: { backgroundColor: '#00b894' } },
-    ]);
+    const colorCalc = new FrameEngine({
+      0:   { backgroundColor: '#c9a84c' },
+      30:  { backgroundColor: '#e85d75' },
+      60:  { backgroundColor: '#6c5ce7' },
+      100: { backgroundColor: '#00b894' },
+    });
 
     wireDemo('color-slider', 'color-slider-val', 'color-readout', colorCalc, (styles) => {
       const box = document.getElementById('color-box');
@@ -490,12 +672,12 @@
     // ========================================
     // 02 — Transform Composition
     // ========================================
-    const transformCalc = new FrameEngine([
-      { percent: 0,   styles: { transform: 'translateX(0px) rotate(0deg) scale(1)' } },
-      { percent: 40,  styles: { transform: 'translateX(300px) rotate(180deg) scale(0.6)' } },
-      { percent: 70,  styles: { transform: 'translateX(500px) rotate(-90deg) scale(1.3)' } },
-      { percent: 100, styles: { transform: 'translateX(850px) rotate(360deg) scale(1)' } },
-    ]);
+    const transformCalc = new FrameEngine({
+      0:   { transform: 'translateX(0px) rotate(0deg) scale(1)' },
+      40:  { transform: 'translateX(300px) rotate(180deg) scale(0.6)' },
+      70:  { transform: 'translateX(500px) rotate(-90deg) scale(1.3)' },
+      100: { transform: 'translateX(850px) rotate(360deg) scale(1)' },
+    });
 
     wireDemo('transform-slider', 'transform-slider-val', 'transform-readout', transformCalc, (styles) => {
       applyStyles(document.getElementById('transform-box'), styles);
@@ -504,11 +686,11 @@
     // ========================================
     // 03 — Filter Effects
     // ========================================
-    const filterCalc = new FrameEngine([
-      { percent: 0,   styles: { filter: 'blur(0px) brightness(1) hue-rotate(0deg)' } },
-      { percent: 50,  styles: { filter: 'blur(6px) brightness(1.5) hue-rotate(90deg)' } },
-      { percent: 100, styles: { filter: 'blur(0px) brightness(0.7) hue-rotate(270deg)' } },
-    ]);
+    const filterCalc = new FrameEngine({
+      0:   { filter: 'blur(0px) brightness(1) hue-rotate(0deg)' },
+      50:  { filter: 'blur(6px) brightness(1.5) hue-rotate(90deg)' },
+      100: { filter: 'blur(0px) brightness(0.7) hue-rotate(270deg)' },
+    });
 
     wireDemo('filter-slider', 'filter-slider-val', 'filter-readout', filterCalc, (styles) => {
       applyStyles(document.getElementById('filter-box'), styles);
@@ -517,53 +699,299 @@
     // ========================================
     // 04 — Multi-Property Orchestra
     // ========================================
-    const multiCalc = new FrameEngine([
-      {
-        percent: 0,
-        styles: {
-          transform: 'translateX(0px) rotate(0deg) scale(1)',
-          backgroundColor: '#c9a84c',
-          opacity: 1,
-          borderWidth: '2px',
-          borderRadius: '10px',
-        },
+    const multiCalc = new FrameEngine({
+      0: {
+        transform: 'translateX(0px) rotate(0deg) scale(1)',
+        backgroundColor: '#c9a84c',
+        opacity: 1,
+        borderWidth: '2px',
+        borderRadius: '10px',
       },
-      {
-        percent: 35,
-        styles: {
-          transform: 'translateX(200px) rotate(-90deg) scale(0.7)',
-          backgroundColor: '#e85d75',
-          opacity: 0.4,
-          borderWidth: '12px',
-          borderRadius: '50px',
-        },
+      35: {
+        transform: 'translateX(200px) rotate(-90deg) scale(0.7)',
+        backgroundColor: '#e85d75',
+        opacity: 0.4,
+        borderWidth: '12px',
+        borderRadius: '50px',
       },
-      {
-        percent: 70,
-        styles: {
-          transform: 'translateX(500px) rotate(180deg) scale(1.4)',
-          backgroundColor: '#6c5ce7',
-          opacity: 0.9,
-          borderWidth: '4px',
-          borderRadius: '4px',
-        },
+      70: {
+        transform: 'translateX(500px) rotate(180deg) scale(1.4)',
+        backgroundColor: '#6c5ce7',
+        opacity: 0.9,
+        borderWidth: '4px',
+        borderRadius: '4px',
       },
-      {
-        percent: 100,
-        styles: {
-          transform: 'translateX(850px) rotate(360deg) scale(1)',
-          backgroundColor: '#00b894',
-          opacity: 1,
-          borderWidth: '2px',
-          borderRadius: '10px',
-        },
+      100: {
+        transform: 'translateX(750px) rotate(360deg) scale(1)',
+        backgroundColor: '#00b894',
+        opacity: 1,
+        borderWidth: '2px',
+        borderRadius: '10px',
       },
-    ]);
+    });
 
     wireDemo('multi-slider', 'multi-slider-val', 'multi-readout', multiCalc, (styles) => {
       const box = document.getElementById('multi-box');
       applyStyles(box, styles);
       box.style.boxShadow = `0 8px 40px ${styles.backgroundColor}33`;
+    });
+
+    // ========================================
+    // 05 — Extrapolation & Clamping
+    // ========================================
+    const extrapCalc = new FrameEngine({
+      0: {
+        transform: 'translateX(0px)',
+        opacity: '1',
+        '--progress': '0',
+      },
+      100: {
+        transform: 'translateX(820px)',
+        opacity: '0',
+        '--progress': '1',
+      },
+    });
+
+    wireDemo('extrap-slider', 'extrap-slider-val', 'extrap-readout', extrapCalc, (styles) => {
+      const box = document.getElementById('extrap-box');
+      applyStyles(box, styles);
+    });
+
+    // ========================================
+    // 06 — Metamorphosis
+    // ========================================
+    const morphFrames = new FrameEngine({
+      0:   { backgroundColor: '#c9a84c', borderRadius: '50%', transform: 'translate(-50%, -50%) scale(1) rotate(0deg)' },
+      20:  { backgroundColor: '#e85d75', borderRadius: '30%', transform: 'translate(-120%, -50%) scale(1.7) rotate(45deg)' },
+      50:  { backgroundColor: '#eda575', borderRadius: '30%', transform: 'translate(-120%, -50%) scale(2) rotate(180deg)' },
+      80:  { backgroundColor: '#6c5ce7', borderRadius: '12%', transform: 'translate(100%, -50%) scale(0.2) rotate(-30deg)' },
+      100: { backgroundColor: '#00b894', borderRadius: '50%', transform: 'translate(-50%, -50%) scale(1.1) rotate(0deg)' },
+    });
+
+    const morphSpring = new PhysicsEngine({ attraction: 0.011, friction: 0.11 });
+    const morphOrb = document.getElementById('morph-orb');
+    const morphReadout = document.getElementById('morph-readout');
+    let morphForward = true;
+
+    morphSpring.on('change', ({ position, progress }) => {
+      const styles = morphFrames.getFrame(progress);
+      applyStyles(morphOrb, styles);
+      morphOrb.style.boxShadow = `0 0 60px ${styles.backgroundColor}55, 0 0 120px ${styles.backgroundColor}22`;
+      renderReadout(morphReadout, {
+        progress: progress.toFixed(3),
+        position: position.toFixed(1),
+        backgroundColor: styles.backgroundColor,
+        borderRadius: styles.borderRadius,
+        transform: styles.transform,
+      });
+    });
+
+    morphSpring.on('complete', () => { morphForward = !morphForward; });
+
+    document.getElementById('morph-go').addEventListener('click', () => {
+      morphSpring.animateTo(0, 2000, 10);
+    });
+
+    document.getElementById('morph-stop').addEventListener('click', () => {
+      morphSpring.stop();
+    });
+
+    document.getElementById('morph-reset').addEventListener('click', () => {
+      morphSpring.stop();
+      morphForward = true;
+      const styles = morphFrames.getFrame(0);
+      applyStyles(morphOrb, styles);
+      morphOrb.style.boxShadow = '0 0 60px rgba(201,168,76,0.3)';
+      renderReadout(morphReadout, { progress: '0.000', position: '0.0' });
+    });
+
+    // ========================================
+    // 07 — Spring Traverse
+    // ========================================
+    const traverseForwardFrames = new FrameEngine({
+      0:   { transform: 'translateX(0px) rotate(0deg) scale(1)', backgroundColor: '#c9a84c', borderRadius: '8px' },
+      35:  { transform: 'translateX(200px) rotate(120deg) scale(0.6)', backgroundColor: '#e85d75', borderRadius: '50%' },
+      70:  { transform: 'translateX(480px) rotate(-60deg) scale(1.2)', backgroundColor: '#6c5ce7', borderRadius: '16px' },
+      100: { transform: 'translateX(700px) rotate(360deg) scale(1)', backgroundColor: '#00b894', borderRadius: '8px' },
+    });
+
+    const traverseReturnFrames = new FrameEngine({
+      0:   { transform: 'translateX(700px) rotate(360deg) scale(1)', backgroundColor: '#00b894', borderRadius: '8px' },
+      30:  { transform: 'translateX(480px) rotate(-60deg) scale(1.2)', backgroundColor: '#6c5ce7', borderRadius: '16px' },
+      65:  { transform: 'translateX(200px) rotate(120deg) scale(0.6)', backgroundColor: '#e85d75', borderRadius: '50%' },
+      100: { transform: 'translateX(0px) rotate(0deg) scale(1)', backgroundColor: '#c9a84c', borderRadius: '8px' },
+    });
+
+    const traverseSpring = new PhysicsEngine({ attraction: 0.03, friction: 0.11 });
+    const traverseBox = document.getElementById('traverse-box');
+    const traverseReadout = document.getElementById('traverse-readout');
+    const traverseGoBtn = document.getElementById('traverse-toggle');
+    let traverseForward = true;
+
+    traverseSpring.on('change', ({ position, progress }) => {
+      const frames = traverseForward ? traverseForwardFrames : traverseReturnFrames;
+      const styles = frames.getFrame(progress);
+      applyStyles(traverseBox, styles);
+      traverseBox.style.boxShadow = `0 8px 40px ${styles.backgroundColor}33`;
+      renderReadout(traverseReadout, {
+        progress: progress.toFixed(3),
+        position: position.toFixed(1),
+        transform: styles.transform,
+        backgroundColor: styles.backgroundColor,
+        borderRadius: styles.borderRadius,
+      });
+    });
+
+    traverseSpring.on('complete', () => {
+      traverseForward = !traverseForward;
+      traverseGoBtn.disabled = false;
+    });
+
+    traverseSpring.on('stop', () => { traverseGoBtn.disabled = false; });
+
+    traverseGoBtn.addEventListener('click', () => {
+      traverseGoBtn.disabled = true;
+      traverseSpring.animateTo(0, 1200, 20);
+    });
+
+    document.getElementById('traverse-stop').addEventListener('click', () => {
+      traverseSpring.stop();
+    });
+
+    // ========================================
+    // 08 — Parameter Lab
+    // ========================================
+    const labFrames = new FrameEngine({
+      0:   { transform: 'translateX(0px) scale(1)', backgroundColor: '#c9a84c', borderRadius: '10px' },
+      50:  { transform: 'translateX(375px) scale(0.7)', backgroundColor: '#e85d75', borderRadius: '50%' },
+      100: { transform: 'translateX(750px) scale(1)', backgroundColor: '#00b894', borderRadius: '10px' },
+    });
+
+    let labSpring = new PhysicsEngine();
+    const labBox = document.getElementById('lab-box');
+    const labReadout = document.getElementById('lab-readout');
+    let labForward = true;
+
+    function wireLabSpring() {
+      labSpring.on('change', ({ position, progress }) => {
+        const styles = labFrames.getFrame(progress);
+        applyStyles(labBox, styles);
+        labBox.style.boxShadow = `0 8px 40px ${styles.backgroundColor}33`;
+        renderReadout(labReadout, {
+          progress: progress.toFixed(3),
+          position: position.toFixed(1),
+          attraction: labSpring.isAnimating ? document.getElementById('lab-attraction').value / 1000 : '—',
+          friction: labSpring.isAnimating ? document.getElementById('lab-friction').value / 100 : '—',
+        });
+      });
+
+      labSpring.on('complete', () => { labForward = !labForward; });
+    }
+
+    wireLabSpring();
+
+    function labAnimate() {
+      const attraction = parseInt(document.getElementById('lab-attraction').value) / 1000;
+      const friction = parseInt(document.getElementById('lab-friction').value) / 100;
+      const distance = parseInt(document.getElementById('lab-distance').value);
+      const velocity = parseInt(document.getElementById('lab-velocity').value);
+
+      labSpring.stop();
+      labSpring = new PhysicsEngine({ attraction, friction });
+      wireLabSpring();
+      labSpring.animateTo(0, distance, velocity);
+    }
+
+    document.getElementById('lab-attraction').addEventListener('input', function() {
+      document.getElementById('lab-attraction-val').textContent = (parseInt(this.value) / 1000).toFixed(3);
+    });
+    document.getElementById('lab-friction').addEventListener('input', function() {
+      document.getElementById('lab-friction-val').textContent = (parseInt(this.value) / 100).toFixed(2);
+    });
+    document.getElementById('lab-distance').addEventListener('input', function() {
+      document.getElementById('lab-distance-val').textContent = this.value;
+    });
+    document.getElementById('lab-velocity').addEventListener('input', function() {
+      document.getElementById('lab-velocity-val').textContent = this.value;
+    });
+
+    document.getElementById('lab-run').addEventListener('click', labAnimate);
+
+    // ========================================
+    // 09 — Cascade
+    // ========================================
+    const CASCADE_COUNT = 8;
+    const cascadeStage = document.getElementById('cascade-stage');
+    const cascadeDots = [];
+    const cascadeSprings = [];
+    let cascadeForward = true;
+
+    const cascadeFrames = new FrameEngine({
+      0:   { transform: 'translateX(0px) translateY(0px) scale(1)', backgroundColor: '#c9a84c', opacity: '1' },
+      30:  { transform: 'translateX(220px) translateY(-50px) scale(1.4)', backgroundColor: '#e85d75', opacity: '0.6' },
+      60:  { transform: 'translateX(500px) translateY(30px) scale(0.7)', backgroundColor: '#6c5ce7', opacity: '0.9' },
+      100: { transform: 'translateX(700px) translateY(0px) scale(1)', backgroundColor: '#00b894', opacity: '1' },
+    });
+
+    for (let i = 0; i < CASCADE_COUNT; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'cascade-dot';
+      dot.style.left = '30px';
+      dot.style.top = (60 + i * 14) + 'px';
+      dot.style.width = (36 - i * 1.5) + 'px';
+      dot.style.height = (36 - i * 1.5) + 'px';
+      dot.style.opacity = 1 - i * 0.04;
+      cascadeStage.appendChild(dot);
+      cascadeDots.push(dot);
+    }
+
+    function cascadeLaunch(forward) {
+      cascadeSprings.forEach(s => s.stop());
+      cascadeSprings.length = 0;
+
+      cascadeDots.forEach((dot, i) => {
+        setTimeout(() => {
+          const spring = new PhysicsEngine();
+          cascadeSprings.push(spring);
+
+          spring.on('change', ({ progress }) => {
+            const styles = cascadeFrames.getFrame(progress);
+            applyStyles(dot, styles);
+            dot.style.boxShadow = `0 4px 24px ${styles.backgroundColor}44`;
+          });
+
+          if (i === 0) {
+            spring.on('change', ({ progress }) => {
+              renderReadout(document.getElementById('cascade-readout'), {
+                'lead dot': progress.toFixed(3),
+                dots: CASCADE_COUNT,
+                stagger: '60ms',
+                state: 'animating',
+              });
+            });
+            spring.on('complete', () => {
+              cascadeForward = !cascadeForward;
+              renderReadout(document.getElementById('cascade-readout'), {
+                'lead dot': '1.000', dots: CASCADE_COUNT, stagger: '60ms', state: 'settled',
+              });
+            });
+          }
+
+          if (forward) {
+            spring.animateTo(0, 1200, 20);
+          } else {
+            spring.animateTo(1200, 0, -20);
+          }
+        }, i * 60);
+      });
+    }
+
+    document.getElementById('cascade-go').addEventListener('click', () => {
+      cascadeLaunch(cascadeForward);
+    });
+
+    document.getElementById('cascade-stop').addEventListener('click', () => {
+      cascadeSprings.forEach(s => s.stop());
     });
   </script>
 </body>

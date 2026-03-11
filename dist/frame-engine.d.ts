@@ -1,9 +1,5 @@
-export interface Keyframe {
-  /** Position in the animation (0-100) */
-  percent: number;
-  /** CSS property/value pairs */
-  styles: Record<string, string | number>;
-}
+/** Keyframe map where keys are percent positions (0-100) and values are CSS property/value pairs */
+export type Keyframes = Record<number, Record<string, string | number>>;
 
 export interface NumericValue {
   value: number;
@@ -43,13 +39,13 @@ export default class FrameEngine {
    * Create a new FrameEngine with the given keyframes.
    * @param keyframes Array of keyframes to interpolate between
    */
-  constructor(keyframes: Keyframe[]);
+  constructor(keyframes: Keyframes);
 
   /**
    * Replace the current keyframes and re-parse all values.
    * @param keyframes Array of keyframes sorted by percent
    */
-  setKeyframes(keyframes: Keyframe[]): void;
+  setKeyframes(keyframes: Keyframes): void;
 
   /**
    * Calculate interpolated CSS styles at a given position.

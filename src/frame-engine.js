@@ -1,7 +1,6 @@
 /**
- * @typedef {Object} Keyframe
- * @property {number} percent - Position in the animation (0-100)
- * @property {Object<string, string|number>} styles - CSS property/value pairs
+ * @typedef {Object<number, Object<string, string|number>>} Keyframes
+ * Keyframe map where keys are percent positions (0-100) and values are CSS property/value pairs.
  */
 
 /**
@@ -79,8 +78,22 @@ const DEFAULTS = {
   opacity:       [{ value: 1, unit: '' }],
   saturate:      [{ value: 1, unit: '' }],
   sepia:         [{ value: 0, unit: '' }],
-  'drop-shadow': [{ value: 0, unit: 'px' }],
+  'drop-shadow-1': [{ value: 0, unit: 'px' }, { value: 0, unit: 'px' }, { value: 0, unit: 'px' }],
+  'drop-shadow-2': [{ value: 0, unit: 'px' }, { value: 0, unit: 'px' }, { value: 0, unit: 'px' }],
 };
+
+const CLAMP_RANGES = {
+  opacity:    [0, 1],
+  blur:       [0, Infinity],
+  brightness: [0, Infinity],
+  contrast:   [0, Infinity],
+  grayscale:  [0, 1],
+  invert:     [0, 1],
+  sepia:      [0, 1],
+  saturate:   [0, Infinity],
+};
+
+const DROP_SHADOW_DEFAULT_COLOR = { red: 0, green: 0, blue: 0, alpha: 0 };
 
 /**
  * Calculates tweened CSS styles between keyframes.
@@ -88,7 +101,7 @@ const DEFAULTS = {
  */
 export default class FrameEngine {
   /**
-   * @param {Keyframe[]} keyframes - Array of keyframes to interpolate between
+   * @param {Keyframes} keyframes - Object mapping percent positions to CSS styles
    */
   constructor(keyframes) {
     this.setKeyframes(keyframes);
@@ -98,12 +111,13 @@ export default class FrameEngine {
 
   /**
    * Replace the current keyframes and re-parse all values.
-   * @param {Keyframe[]} keyframes - Array of keyframes sorted by percent
+   * @param {Keyframes} keyframes - Object mapping percent positions (0-100) to CSS styles
    */
   setKeyframes(keyframes) {
-    this.keyframes = [...keyframes]
-      .sort((a, b) => a.percent - b.percent)
-      .map(kf => ({ percent: kf.percent, values: this.flatten(kf.styles) }));
+    this.keyframes = Object.keys(keyframes)
+      .map(Number)
+      .sort((a, b) => a - b)
+      .map(pct => ({ percent: pct, values: this.flatten(keyframes[pct]) }));
 
     // Fix #7: Inject defaults for missing function-list sub-keys
     const allSubKeys = {};
@@ -127,12 +141,26 @@ export default class FrameEngine {
       const orderKey = `${parent}:__order`;
       for (const kf of this.keyframes) {
         const hasParent = orderKey in kf.values;
-        if (!hasParent) continue;
+        if (!hasParent) {
+          kf.values[orderKey] = { discrete: true, value: [...allSubKeys[parent]] };
+          for (const func of allSubKeys[parent]) {
+            const subKey = `${parent}:${func}`;
+            const defaults = DEFAULTS[func] || [{ value: 0, unit: '' }];
+            kf.values[subKey] = { args: defaults.map(d => ({ ...d })) };
+            if (func.startsWith('drop-shadow-')) {
+              kf.values[subKey].color = { ...DROP_SHADOW_DEFAULT_COLOR };
+            }
+          }
+          continue;
+        }
         for (const func of allSubKeys[parent]) {
           const subKey = `${parent}:${func}`;
           if (!(subKey in kf.values)) {
             const defaults = DEFAULTS[func] || [{ value: 0, unit: '' }];
             kf.values[subKey] = { args: defaults.map(d => ({ ...d })) };
+            if (func.startsWith('drop-shadow-')) {
+              kf.values[subKey].color = { ...DROP_SHADOW_DEFAULT_COLOR };
+            }
             if (!kf.values[orderKey].value.includes(func)) {
               kf.values[orderKey].value.push(func);
             }
@@ -204,10 +232,18 @@ export default class FrameEngine {
   flattenFunctions(parent, str) {
     const out = {};
     const order = [];
-    for (const { name, args } of this.parseFunctions(str)) {
-      // Fix #6: Always store as MultiArgValue
-      out[`${parent}:${name}`] = { args };
-      order.push(name);
+    const counts = {};
+    for (const { name, args, color } of this.parseFunctions(str)) {
+      let flatName = name;
+      if (name === 'drop-shadow') {
+        counts[name] = (counts[name] || 0) + 1;
+        if (counts[name] > 2) continue;
+        flatName = `${name}-${counts[name]}`;
+      }
+      const entry = { args };
+      if (color) entry.color = color;
+      out[`${parent}:${flatName}`] = entry;
+      order.push(flatName);
     }
     out[`${parent}:__order`] = { discrete: true, value: order };
     return out;
@@ -254,13 +290,53 @@ export default class FrameEngine {
         i++;
       }
 
-      const args = argStr.split(/\s*,\s*|\s+/).map(part => {
-        const parsed = part.match(/^(-?\d*\.?\d+)(\D*)$/);
-        return parsed ? { value: parseFloat(parsed[1]), unit: parsed[2] } : { value: 0, unit: '' };
-      });
-      results.push({ name, args });
+      if (name === 'drop-shadow') {
+        const parts = this.splitArgs(argStr);
+        const numericArgs = [];
+        let color = null;
+        for (const part of parts) {
+          if (this.isColor(part)) {
+            color = this.parseColor(part);
+          } else {
+            const parsed = part.match(/^(-?\d*\.?\d+)(\D*)$/);
+            numericArgs.push(parsed ? { value: parseFloat(parsed[1]), unit: parsed[2] } : { value: 0, unit: '' });
+          }
+        }
+        results.push({ name, args: numericArgs, color });
+      } else {
+        const args = argStr.split(/\s*,\s*|\s+/).map(part => {
+          const parsed = part.match(/^(-?\d*\.?\d+)(\D*)$/);
+          return parsed ? { value: parseFloat(parsed[1]), unit: parsed[2] } : { value: 0, unit: '' };
+        });
+        results.push({ name, args });
+      }
     }
     return results;
+  }
+
+  /**
+   * Paren-aware argument splitter for CSS functions.
+   * Splits on spaces/commas at depth 0, preserving nested parens.
+   * @param {string} argStr
+   * @returns {string[]}
+   */
+  splitArgs(argStr) {
+    const parts = [];
+    let current = '';
+    let depth = 0;
+    for (let i = 0; i < argStr.length; i++) {
+      const ch = argStr[i];
+      if (ch === '(') depth++;
+      else if (ch === ')') depth--;
+      if (depth === 0 && (ch === ' ' || ch === ',')) {
+        if (current.trim()) parts.push(current.trim());
+        current = '';
+      } else {
+        current += ch;
+      }
+    }
+    if (current.trim()) parts.push(current.trim());
+    return parts;
   }
 
   /**
@@ -446,19 +522,19 @@ export default class FrameEngine {
 
     if (percent <= first.percent) {
       const range = frames[1].percent - first.percent;
-      return { from: first, to: frames[1], factor: range === 0 ? 0 : (percent - first.percent) / range };
+      return { from: first, to: frames[1], factor: range === 0 ? 1 : (percent - first.percent) / range };
     }
 
     if (percent >= last.percent) {
       const prev = frames[frames.length - 2];
       const range = last.percent - prev.percent;
-      return { from: prev, to: last, factor: range === 0 ? 0 : (percent - prev.percent) / range };
+      return { from: prev, to: last, factor: range === 0 ? 1 : (percent - prev.percent) / range };
     }
 
     for (let i = 0; i < frames.length - 1; i++) {
       if (percent >= frames[i].percent && percent <= frames[i + 1].percent) {
         const range = frames[i + 1].percent - frames[i].percent;
-        return { from: frames[i], to: frames[i + 1], factor: range === 0 ? 0 : (percent - frames[i].percent) / range };
+        return { from: frames[i], to: frames[i + 1], factor: range === 0 ? 1 : (percent - frames[i].percent) / range };
       }
     }
 
@@ -544,17 +620,35 @@ export default class FrameEngine {
           const e = endArgs[i] || defaultArgs[i] || { value: 0, unit: '' };
           interpolated.push({ value: this.lerp(s.value, e.value, factor), unit: s.unit || e.unit });
         }
-        results[key] = { args: interpolated };
+        // Clamp bounded properties
+        const funcName = key.includes(':') ? key.substring(key.indexOf(':') + 1) : key;
+        const clampRange = CLAMP_RANGES[funcName];
+        if (clampRange) {
+          for (const arg of interpolated) {
+            arg.value = Math.min(clampRange[1], Math.max(clampRange[0], arg.value));
+          }
+        }
+        const result = { args: interpolated };
+        if (start.color || end.color) {
+          result.color = this.lerpColor(
+            start.color || DROP_SHADOW_DEFAULT_COLOR,
+            end.color || DROP_SHADOW_DEFAULT_COLOR,
+            factor
+          );
+        }
+        results[key] = result;
         continue;
       }
 
       // Single numeric (non-function-list properties only)
       if (start && 'value' in start) {
         const fallback = end || this.getDefault(key)[0];
-        results[key] = {
-          value: this.lerp(start.value, fallback.value, factor),
-          unit: start.unit
-        };
+        let value = this.lerp(start.value, fallback.value, factor);
+        const clampRange = CLAMP_RANGES[key];
+        if (clampRange) {
+          value = Math.min(clampRange[1], Math.max(clampRange[0], value));
+        }
+        results[key] = { value, unit: start.unit };
       }
     }
 
@@ -584,7 +678,21 @@ export default class FrameEngine {
         if (FUNCTION_LIST_PROPERTIES.has(parent)) {
           if (!groups[parent]) groups[parent] = {};
           if (val.args) {
-            groups[parent][func] = `${func}(${val.args.map(arg => `${this.format(arg.value)}${arg.unit}`).join(', ')})`;
+            if (func.startsWith('drop-shadow-')) {
+              const displayName = func.replace(/-\d+$/, '');
+              const argsStr = val.args.map(arg => `${this.format(arg.value)}${arg.unit}`).join(' ');
+              if (val.color) {
+                const c = val.color;
+                const colorStr = c.alpha < 1
+                  ? `rgba(${c.red},${c.green},${c.blue},${c.alpha})`
+                  : `rgb(${c.red},${c.green},${c.blue})`;
+                groups[parent][func] = `${displayName}(${argsStr} ${colorStr})`;
+              } else {
+                groups[parent][func] = `${displayName}(${argsStr})`;
+              }
+            } else {
+              groups[parent][func] = `${func}(${val.args.map(arg => `${this.format(arg.value)}${arg.unit}`).join(', ')})`;
+            }
           } else {
             groups[parent][func] = `${func}(${this.format(val.value)}${val.unit})`;
           }
