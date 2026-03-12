@@ -21,8 +21,8 @@
       --gold-glow: rgba(201, 168, 76, 0.12);
       --cream: #e8e0cc;
       --cream-dim: #9a9284;
-      --text: #c4bfb2;
-      --text-dim: #6b665c;
+      --text: #d4cfc2;
+      --text-dim: #8a8478;
       --font-display: 'Cormorant Garamond', Georgia, serif;
       --font-body: 'Outfit', system-ui, sans-serif;
     }
@@ -63,8 +63,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 50vh;
-      padding: 2.5rem 2rem 3rem;
+      padding: 5rem 2rem 3.5rem;
       text-align: center;
     }
 
@@ -114,7 +113,7 @@
 
     .hero p {
       max-width: 520px;
-      font-size: 1.05rem;
+      font-size: 1rem;
       line-height: 1.7;
       color: var(--text-dim);
       opacity: 0;
@@ -123,9 +122,9 @@
 
     .hero-line {
       width: 1px;
-      height: 80px;
+      height: 50px;
       background: linear-gradient(to bottom, var(--gold-dim), transparent);
-      margin-top: 3rem;
+      margin-top: 2rem;
       opacity: 0;
       animation: fadeUp 1s ease forwards 0.85s;
     }
@@ -170,7 +169,7 @@
     }
 
     .demo-desc {
-      font-size: 0.88rem;
+      font-size: 1rem;
       color: var(--text-dim);
       line-height: 1.6;
       margin-bottom: 2rem;
@@ -403,7 +402,7 @@
     }
 
     .code-card .code-desc {
-      font-size: 0.88rem;
+      font-size: 1rem;
       color: var(--text-dim);
       line-height: 1.6;
       margin-bottom: 1.75rem;
@@ -457,6 +456,59 @@
     .code-block code .cm { color: var(--text-dim); }
     .code-block code .prop { color: #6c9fe7; }
 
+    /* ---- Install banner ---- */
+    .install-banner {
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+      margin: 0 auto 3.5rem;
+      max-width: 680px;
+      padding: 0 1.5rem;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 0.9s;
+    }
+
+    .install-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .install-label {
+      font-family: var(--font-body);
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .install-value {
+      font-family: 'Courier New', monospace;
+      font-size: 0.88rem;
+      color: var(--cream);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.5em 1.2em;
+      user-select: all;
+      cursor: copy;
+      transition: border-color 0.3s ease;
+    }
+
+    .install-value:hover {
+      border-color: var(--gold-dim);
+    }
+
+    .install-size {
+      font-family: 'Courier New', monospace;
+      font-size: 0.88rem;
+      color: var(--gold);
+      padding: 0.5em 0;
+    }
+
     /* ---- Responsive ---- */
     @media (max-width: 640px) {
       .demo-section { padding: 1.5rem; }
@@ -464,6 +516,7 @@
       .readout { gap: 0.75rem 1.25rem; }
       .code-blocks { grid-template-columns: 1fr; }
       .code-card { padding: 1.5rem; }
+      .install-banner { gap: 1.5rem; }
     }
   </style>
 </head>
@@ -477,6 +530,18 @@
     <p>Position-driven CSS keyframe interpolation. Colors, transforms, filters, opacity — calculated between any number of keyframes in real time.</p>
     <div class="hero-line"></div>
   </header>
+
+  <!-- ======== INSTALL ======== -->
+  <div class="install-banner">
+    <div class="install-item">
+      <span class="install-label">Install</span>
+      <code class="install-value">npm i @magic-spells/frame-engine</code>
+    </div>
+    <div class="install-item">
+      <span class="install-label">Size (gzip)</span>
+      <span class="install-size">~5 KB</span>
+    </div>
+  </div>
 
   <!-- ======== CODE EXAMPLE ======== -->
   <div class="code-example">
@@ -639,7 +704,7 @@ animation.<span class="fn">getFrame</span>(<span class="num">1.2</span>)
       <div class="demo-header">
         <h2>Metamorphosis</h2>
       </div>
-      <p class="demo-desc">Driven by <code style="color:var(--gold);font-size:0.85em;">@magic-spells/physics-engine</code> — a spring drives progress through five Frame Engine keyframes. The orb morphs color, border-radius, scale, and glow with natural overshoot and settle.</p>
+      <p class="demo-desc">Driven by <a href="https://github.com/magic-spells/physics-engine" target="_blank" style="color:var(--gold);font-size:0.85em;font-family:monospace;text-decoration:none;border-bottom:1px solid var(--gold-dim);">@magic-spells/physics-engine</a> — a spring drives progress through five Frame Engine keyframes. The orb morphs color, border-radius, scale, and glow with natural overshoot and settle.</p>
       <div class="stage" style="height: 260px;">
         <div class="stage-grid"></div>
         <div class="tween-box" id="morph-orb" style="
@@ -664,7 +729,7 @@ animation.<span class="fn">getFrame</span>(<span class="num">1.2</span>)
       <div class="demo-header">
         <h2>Spring Traverse</h2>
       </div>
-      <p class="demo-desc">Driven by <code style="color:var(--gold);font-size:0.85em;">@magic-spells/physics-engine</code> — a spring propels a shape across the stage. Frame Engine maps the spring progress to compound transforms, color shifts, and border-radius.</p>
+      <p class="demo-desc">Driven by <a href="https://github.com/magic-spells/physics-engine" target="_blank" style="color:var(--gold);font-size:0.85em;font-family:monospace;text-decoration:none;border-bottom:1px solid var(--gold-dim);">@magic-spells/physics-engine</a> — a spring propels a shape across the stage. Frame Engine maps the spring progress to compound transforms, color shifts, and border-radius.</p>
       <div class="stage" style="height: 200px;">
         <div class="stage-grid"></div>
         <div class="tween-box" id="traverse-box" style="
@@ -686,7 +751,7 @@ animation.<span class="fn">getFrame</span>(<span class="num">1.2</span>)
       <div class="demo-header">
         <h2>Parameter Lab</h2>
       </div>
-      <p class="demo-desc">Driven by <code style="color:var(--gold);font-size:0.85em;">@magic-spells/physics-engine</code> — adjust attraction and friction to feel how spring dynamics change. Higher attraction snaps faster. Higher friction damps the bounce.</p>
+      <p class="demo-desc">Driven by <a href="https://github.com/magic-spells/physics-engine" target="_blank" style="color:var(--gold);font-size:0.85em;font-family:monospace;text-decoration:none;border-bottom:1px solid var(--gold-dim);">@magic-spells/physics-engine</a> — adjust attraction and friction to feel how spring dynamics change. Higher attraction snaps faster. Higher friction damps the bounce.</p>
       <div class="stage" style="height: 200px;">
         <div class="stage-grid"></div>
         <div class="tween-box" id="lab-box" style="
@@ -727,7 +792,7 @@ animation.<span class="fn">getFrame</span>(<span class="num">1.2</span>)
       <div class="demo-header">
         <h2>Cascade</h2>
       </div>
-      <p class="demo-desc">Driven by <code style="color:var(--gold);font-size:0.85em;">@magic-spells/physics-engine</code> — eight elements, each with its own spring, launched in sequence. The same Frame Engine keyframes on every dot — staggered timing creates a wave of color and motion.</p>
+      <p class="demo-desc">Driven by <a href="https://github.com/magic-spells/physics-engine" target="_blank" style="color:var(--gold);font-size:0.85em;font-family:monospace;text-decoration:none;border-bottom:1px solid var(--gold-dim);">@magic-spells/physics-engine</a> — eight elements, each with its own spring, launched in sequence. The same Frame Engine keyframes on every dot — staggered timing creates a wave of color and motion.</p>
       <div class="stage" style="height: 200px;" id="cascade-stage">
         <div class="stage-grid"></div>
       </div>
@@ -1120,6 +1185,7 @@ animation.<span class="fn">getFrame</span>(<span class="num">1.2</span>)
     document.getElementById('cascade-stop').addEventListener('click', () => {
       cascadeSprings.forEach(s => s.stop());
     });
+
   </script>
 </body>
 </html>
