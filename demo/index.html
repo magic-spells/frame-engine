@@ -1186,6 +1186,20 @@ animation.<span class="fn">getFrame</span>(<span class="num">1.2</span>)
       cascadeSprings.forEach(s => s.stop());
     });
 
+    // Copy install command to clipboard
+    const installValue = document.querySelector('.install-value');
+    if (installValue) {
+      installValue.addEventListener('click', function () {
+        navigator.clipboard.writeText(this.textContent.trim()).then(() => {
+          const original = installValue.textContent;
+          installValue.textContent = 'Copied!';
+          setTimeout(() => {
+            installValue.textContent = original;
+          }, 1500);
+        });
+      });
+    }
+
   </script>
 </body>
 </html>
