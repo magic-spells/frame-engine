@@ -1,6 +1,6 @@
 {
   "name": "@magic-spells/frame-engine",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Calculate intermediate states (tweens) between CSS keyframes",
   "type": "module",
   "main": "dist/frame-engine.min.js",
